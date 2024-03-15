@@ -75,7 +75,10 @@ include_directories(${STB_DIR})
 # GLM
 find_package(glm QUIET)
 
-add_executable(ImEngine "main.cpp" ${GLAD_DIR}/src/glad.c)
+# Include directories for header files
+include_directories(include)
+
+add_executable(ImEngine app/main.cpp app/ImEngineApp.cpp ${GLAD_DIR}/src/glad.c)
 
 if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up include directories
     message(STATUS "GLM not found on the system. Using the bundled version.")
