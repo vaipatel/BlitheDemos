@@ -80,6 +80,7 @@ set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/app/main.cpp
     ${PROJECT_SOURCE_DIR}/app/ImEngineApp.cpp
     ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.cpp
+    ${PROJECT_SOURCE_DIR}/app/GLWrappers/Texture.cpp
     ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.cpp
 )
 
@@ -88,9 +89,11 @@ set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/app/Geometry/Tri.h
     ${PROJECT_SOURCE_DIR}/app/Geometry/Vertex.h
     ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.h
+    ${PROJECT_SOURCE_DIR}/app/GLWrappers/Texture.h
     ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/app/Utils/ImAssert.h
 	${PROJECT_SOURCE_DIR}/app/Utils/ImPath.h
+	${PROJECT_SOURCE_DIR}/app/Utils/ImStrUtils.h
 )
 
 # My shaders
