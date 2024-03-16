@@ -77,29 +77,29 @@ find_package(glm QUIET)
 
 # My sources and headers
 set(MY_PROJECT_SOURCES
-    ${PROJECT_SOURCE_DIR}/app/main.cpp
-    ${PROJECT_SOURCE_DIR}/app/ImEngineApp.cpp
-    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.cpp
-    ${PROJECT_SOURCE_DIR}/app/GLWrappers/Texture.cpp
-    ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.cpp
+    ${PROJECT_SOURCE_DIR}/App/main.cpp
+    ${PROJECT_SOURCE_DIR}/App/ImEngineApp.cpp
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
+    ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
 )
 
 set(MY_PROJECT_HEADERS
-	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
-    ${PROJECT_SOURCE_DIR}/app/Geometry/Tri.h
-    ${PROJECT_SOURCE_DIR}/app/Geometry/Vertex.h
-    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.h
-    ${PROJECT_SOURCE_DIR}/app/GLWrappers/Texture.h
-    ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.h
-    ${PROJECT_SOURCE_DIR}/app/Utils/ImAssert.h
-	${PROJECT_SOURCE_DIR}/app/Utils/ImPath.h
-	${PROJECT_SOURCE_DIR}/app/Utils/ImStrUtils.h
+	${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/Vertex.h
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.h
+    ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/ImAssert.h
+	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
+	${PROJECT_SOURCE_DIR}/App/Utils/ImStrUtils.h
 )
 
 # My shaders
 file(GLOB MY_PROJECT_SHADERS 
-    "${PROJECT_SOURCE_DIR}/app/Shaders/*.vert"
-    "${PROJECT_SOURCE_DIR}/app/Shaders/*.frag"
+    "${PROJECT_SOURCE_DIR}/App/Shaders/*.vert"
+    "${PROJECT_SOURCE_DIR}/App/Shaders/*.frag"
 )
 
 # My shaders
@@ -111,17 +111,17 @@ file(GLOB MY_PROJECT_ASSETS
 add_executable(ImEngine ${MY_PROJECT_SOURCES} ${MY_PROJECT_HEADERS} ${GLAD_DIR}/src/glad.c)
 
 # Organize source files into groups
-source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Source Files" FILES ${MY_PROJECT_SOURCES})
-source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Header Files" FILES ${MY_PROJECT_HEADERS})
-source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Shaders" FILES ${MY_PROJECT_SHADERS})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Source Files" FILES ${MY_PROJECT_SOURCES})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Header Files" FILES ${MY_PROJECT_HEADERS})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Shaders" FILES ${MY_PROJECT_SHADERS})
 
 # Include directories
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Geometry)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/GLWrappers)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Objects)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Utils)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/extern)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Geometry)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrappers)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
 
 # Add shaders to the executable only for them to show up in IDEs
 target_sources(ImEngine PRIVATE ${MY_PROJECT_SHADERS})
