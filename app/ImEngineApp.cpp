@@ -14,14 +14,14 @@
 
 #include "ImPath.h"
 #include "ShaderProgram.h"
-//#include "Texture.h"
+#include "Texture.h"
 #include "TrisObject.h"
 
 ImEngineApp::ImEngineApp()
 {
 	std::string exePath = IME::GetExecutablePath();
 	m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
-	//m_texture = new Texture("P1030293.jpg", TextureData::FilterParam::LINEAR, 0);
+	m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
 	SetupTriangle();
 }
 

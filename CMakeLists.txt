@@ -102,6 +102,11 @@ file(GLOB MY_PROJECT_SHADERS
     "${PROJECT_SOURCE_DIR}/app/Shaders/*.frag"
 )
 
+# My shaders
+file(GLOB MY_PROJECT_ASSETS 
+    "${PROJECT_SOURCE_DIR}/Assets/*.jpg"
+)
+
 # Add main executable
 add_executable(ImEngine ${MY_PROJECT_SOURCES} ${MY_PROJECT_HEADERS} ${GLAD_DIR}/src/glad.c)
 
@@ -149,4 +154,14 @@ foreach(SHADER ${MY_PROJECT_SHADERS})
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${SHADER}
                 $<TARGET_FILE_DIR:ImEngine>/Shaders/${SHADER_NAME})
+endforeach()
+
+# Create a "Assets" directory in the output directory (where the executable is)
+# and copy asset files there
+foreach(ASSET ${MY_PROJECT_ASSETS})
+    get_filename_component(ASSET_NAME ${ASSET} NAME)
+    add_custom_command(TARGET ImEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${ASSET}
+                $<TARGET_FILE_DIR:ImEngine>/Assets/${ASSET_NAME})
 endforeach()
