@@ -79,6 +79,7 @@ find_package(glm QUIET)
 set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.cpp
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
@@ -88,8 +89,10 @@ set(MY_PROJECT_HEADERS
 	${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Vertex.h
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.h
+	${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/App/Utils/ImAssert.h
 	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
