@@ -15,14 +15,14 @@
 #include "ImPath.h"
 #include "ShaderProgram.h"
 //#include "Texture.h"
-//#include "TrisObject.h"
+#include "TrisObject.h"
 
 ImEngineApp::ImEngineApp()
 {
 	std::string exePath = IME::GetExecutablePath();
 	m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
 	//m_texture = new Texture("P1030293.jpg", TextureData::FilterParam::LINEAR, 0);
-	//SetupTriangle();
+	SetupTriangle();
 }
 
 ImEngineApp::~ImEngineApp()
@@ -46,8 +46,8 @@ void ImEngineApp::Render(ImVec4& _clearColor)
 	////    m_triangleProgram->SetUniform("matrix", matrix);
 	////    m_triangleProgram->SetUniform("angle", angle);
 	//
-	//m_tri->Draw();
-	//
+	m_tri->Draw();
+	
 	m_shader->Unbind();
 }
 
@@ -95,13 +95,13 @@ void ImEngineApp::DoExistingDemoStuff(ImVec4& _clearColor)
 
 void ImEngineApp::SetupTriangle()
 {
-	//std::vector<Tri> triVertices = {
-	//	// positions            // colors                 // texCoords
-	//	{
-	//		{ { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-	//		{ { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-	//		{ { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }
-	//	}
-	//};
-	//m_tri = new TrisObject(triVertices);
+	std::vector<Tri> triVertices = {
+		// positions            // colors                 // texCoords
+		{
+			{ { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+			{ { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+			{ { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }
+		}
+	};
+	m_tri = new TrisObject(triVertices);
 }

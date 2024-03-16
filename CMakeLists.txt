@@ -78,15 +78,19 @@ find_package(glm QUIET)
 # My sources and headers
 set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/app/main.cpp
-    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/app/ImEngineApp.cpp
+    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.cpp
+    ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.cpp
 )
 
 set(MY_PROJECT_HEADERS
+	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
+    ${PROJECT_SOURCE_DIR}/app/Geometry/Tri.h
+    ${PROJECT_SOURCE_DIR}/app/Geometry/Vertex.h
     ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.h
+    ${PROJECT_SOURCE_DIR}/app/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/app/Utils/ImAssert.h
 	${PROJECT_SOURCE_DIR}/app/Utils/ImPath.h
-	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
 )
 
 # My shaders
@@ -105,7 +109,9 @@ source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Shaders" FILES ${MY_PROJEC
 
 # Include directories
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Geometry)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/GLWrappers)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Objects)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Utils)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/extern)
 
