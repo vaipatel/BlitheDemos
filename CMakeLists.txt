@@ -75,10 +75,31 @@ include_directories(${STB_DIR})
 # GLM
 find_package(glm QUIET)
 
-# Include directories for header files
-include_directories(include)
+# My sources and headers
+set(MY_PROJECT_SOURCES
+    ${PROJECT_SOURCE_DIR}/app/main.cpp
+    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.cpp
+    ${PROJECT_SOURCE_DIR}/app/ImEngineApp.cpp
+)
 
-add_executable(ImEngine app/main.cpp app/ImEngineApp.cpp ${GLAD_DIR}/src/glad.c)
+set(MY_PROJECT_HEADERS
+    ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.h
+    ${PROJECT_SOURCE_DIR}/app/Utils/ImAssert.h
+	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
+)
+
+# Add main executable
+add_executable(ImEngine ${MY_PROJECT_SOURCES} ${MY_PROJECT_HEADERS} ${GLAD_DIR}/src/glad.c)
+
+# Organize source files into groups
+source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Source Files" FILES ${MY_PROJECT_SOURCES})
+source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Header Files" FILES ${MY_PROJECT_HEADERS})
+
+# Include directories
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/GLWrappers)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Utils)
+target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/extern)
 
 if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up include directories
     message(STATUS "GLM not found on the system. Using the bundled version.")
