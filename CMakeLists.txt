@@ -89,18 +89,28 @@ set(MY_PROJECT_HEADERS
 	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
 )
 
+# My shaders
+file(GLOB MY_PROJECT_SHADERS 
+    "${PROJECT_SOURCE_DIR}/app/Shaders/*.vert"
+    "${PROJECT_SOURCE_DIR}/app/Shaders/*.frag"
+)
+
 # Add main executable
 add_executable(ImEngine ${MY_PROJECT_SOURCES} ${MY_PROJECT_HEADERS} ${GLAD_DIR}/src/glad.c)
 
 # Organize source files into groups
 source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Source Files" FILES ${MY_PROJECT_SOURCES})
 source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Header Files" FILES ${MY_PROJECT_HEADERS})
+source_group(TREE "${PROJECT_SOURCE_DIR}/app" PREFIX "Shaders" FILES ${MY_PROJECT_SHADERS})
 
 # Include directories
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/GLWrappers)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/app/Utils)
 target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/extern)
+
+# Add shaders to the executable only for them to show up in IDEs
+target_sources(ImEngine PRIVATE ${MY_PROJECT_SHADERS})
 
 if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up include directories
     message(STATUS "GLM not found on the system. Using the bundled version.")
@@ -121,3 +131,13 @@ if(NOT GLFW3_FOUND AND EXISTS "${GLFW_DLL}")
         "${GLFW_DLL}"
         $<TARGET_FILE_DIR:ImEngine>)
 endif()
+
+# Create a "Shaders" directory in the output directory (where the executable is)
+# and copy shader files there
+foreach(SHADER ${MY_PROJECT_SHADERS})
+    get_filename_component(SHADER_NAME ${SHADER} NAME)
+    add_custom_command(TARGET ImEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${SHADER}
+                $<TARGET_FILE_DIR:ImEngine>/Shaders/${SHADER_NAME})
+endforeach()

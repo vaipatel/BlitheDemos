@@ -12,13 +12,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-//#include "Shader.h"
+#include "ImPath.h"
+#include "ShaderProgram.h"
 //#include "Texture.h"
 //#include "TrisObject.h"
 
 ImEngineApp::ImEngineApp()
 {
-	//m_shader = new ShaderProgram("Shaders/Triangle.vert", "Shaders/Triangle.frag");
+	std::string exePath = IME::GetExecutablePath();
+	m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
 	//m_texture = new Texture("P1030293.jpg", TextureData::FilterParam::LINEAR, 0);
 	//SetupTriangle();
 }
@@ -34,7 +36,7 @@ void ImEngineApp::Render(ImVec4& _clearColor)
 {
 	DoExistingDemoStuff(_clearColor);
 
-	//m_shader->Bind();
+	m_shader->Bind();
 	//
 	////    QMatrix4x4 matrix;
 	////    matrix.perspective(60.0f, m_viewAspect, 0.1f, 100.0f);
@@ -46,7 +48,7 @@ void ImEngineApp::Render(ImVec4& _clearColor)
 	//
 	//m_tri->Draw();
 	//
-	//m_shader->Unbind();
+	m_shader->Unbind();
 }
 
 void ImEngineApp::DoExistingDemoStuff(ImVec4& _clearColor)
