@@ -85,6 +85,7 @@ set(MY_PROJECT_SOURCES
 set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/app/GLWrappers/ShaderProgram.h
     ${PROJECT_SOURCE_DIR}/app/Utils/ImAssert.h
+	${PROJECT_SOURCE_DIR}/app/Utils/ImPath.h
 	${PROJECT_SOURCE_DIR}/app/ImEngineApp.h
 )
 
