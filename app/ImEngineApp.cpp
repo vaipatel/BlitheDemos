@@ -32,10 +32,8 @@ ImEngineApp::~ImEngineApp()
 	delete m_tri;
 }
 
-void ImEngineApp::Render(ImVec4& _clearColor)
+void ImEngineApp::Render(const ImVec4& _clearColor)
 {
-	DoExistingDemoStuff(_clearColor);
-
 	m_shader->Bind();
 	//
 	////    QMatrix4x4 matrix;

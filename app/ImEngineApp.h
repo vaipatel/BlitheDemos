@@ -14,10 +14,10 @@ public:
 	ImEngineApp();
 	~ImEngineApp();
 
-	void Render(ImVec4& _clearColor);
+	void Render(const ImVec4& _clearColor);
+    void DoExistingDemoStuff(ImVec4& _clearColor);
 
 private:
-	void DoExistingDemoStuff(ImVec4& _clearColor);
 	void SetupTriangle();
 
 	bool m_showDemoWindow = true;
