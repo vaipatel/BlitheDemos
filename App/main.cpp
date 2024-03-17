@@ -19,6 +19,7 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "ImEngineApp.h"
+#include "TriangleDemo.h"
 
 #include <iostream>
 
@@ -125,6 +126,7 @@ int main(int, char**)
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	IME::ImEngineApp myApp;
+    myApp.AddDemoFactory(new IME::TriangleDemoFactory());
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -149,7 +151,9 @@ int main(int, char**)
 		ImGui::NewFrame();
 
         // ImGui windows
-        //myApp.DoExistingDemoStuff(clear_color);
+        myApp.DrawDemoSelectorUI();
+
+        myApp.DrawUIForSelectedDemo();
 
 		// Rendering
 		ImGui::Render();
@@ -160,7 +164,12 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Render MyApp OpenGL stuff
-        myApp.Render(clear_color);
+        if (display_w > 0 && display_h > 0)
+        {
+            // Recalculate the aspect ratio
+            float aspectRatio = display_w / static_cast<float>(display_h);
+            myApp.RenderSelectedDemo(clear_color, aspectRatio);
+        }
 
         // Render ImGui over OpenGL stuff
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

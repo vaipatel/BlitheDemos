@@ -13,42 +13,75 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "ImPath.h"
-#include "ShaderProgram.h"
 #include "Texture.h"
-#include "TrisObject.h"
 
 namespace IME
 {
     ImEngineApp::ImEngineApp()
     {
-        std::string exePath = IME::GetExecutablePath();
-        m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
+        std::string exePath = GetExecutablePath();
         m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
-        SetupTriangle();
+        
     }
 
     ImEngineApp::~ImEngineApp()
     {
-        delete m_shader;
         delete m_texture;
-        delete m_tri;
+
+        for (auto& nameAndFac : m_demoFactories)
+        {
+            delete nameAndFac.second;
+        }
+        m_demoFactories.clear();
+
+        delete m_currentDemo;
     }
 
-    void ImEngineApp::Render(const ImVec4& _clearColor)
+    void ImEngineApp::AddDemoFactory(ImDemoFactory* _demoFactory)
     {
-        m_shader->Bind();
-        //
-        ////    QMatrix4x4 matrix;
-        ////    matrix.perspective(60.0f, m_viewAspect, 0.1f, 100.0f);
-        ////    matrix.translate(0, 0, -4);
-        ////    float angle = static_cast<float>(100.0 * m_frame / screen()->refreshRate());
-        ////    matrix.rotate(angle, 0, 1, 0);
-        ////    m_triangleProgram->SetUniform("matrix", matrix);
-        ////    m_triangleProgram->SetUniform("angle", angle);
-        //
-        m_tri->Draw();
+        ASSERT(_demoFactory, "Demo factory cannot be null");
 
-        m_shader->Unbind();
+        std::string name = _demoFactory->GetName();
+        bool noDupe = m_demoFactories.find(name) == m_demoFactories.end();
+        ASSERT(noDupe, "Demo factory with name " << name << " has already been added");
+
+        m_demoFactories.insert({ name, _demoFactory });
+    }
+
+    void ImEngineApp::DrawDemoSelectorUI()
+    {
+        ImGui::Begin("Demo Selector");
+
+        for (auto& demo : m_demoFactories)
+        {
+            // Use the demo's name as the selectable label
+            if (ImGui::Selectable(demo.first.c_str(), m_selectedDemoFactory == demo.second))
+            {
+                delete m_currentDemo;
+
+                m_selectedDemoFactory = demo.second;
+                m_currentDemo = m_selectedDemoFactory->CreateDemo(); // Set the current demo
+                m_currentDemo->OnInit();
+            }
+        }
+
+        ImGui::End();
+    }
+
+    void ImEngineApp::DrawUIForSelectedDemo()
+    {
+        if (m_currentDemo)
+        {
+            m_currentDemo->OnImGuiRender();
+        }
+    }
+
+    void ImEngineApp::RenderSelectedDemo(const ImVec4& _clearColor, float _aspect)
+    {
+        if (m_currentDemo)
+        {
+            m_currentDemo->OnRender(_aspect);
+        }
     }
 
     void ImEngineApp::DoExistingDemoStuff(ImVec4& _clearColor)
@@ -91,18 +124,5 @@ namespace IME
                 m_showAnotherWindow = false;
             ImGui::End();
         }
-    }
-
-    void ImEngineApp::SetupTriangle()
-    {
-        std::vector<Tri> triVertices = {
-            // positions            // colors                 // texCoords
-            {
-                { { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-                { { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-                { { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }
-            }
-        };
-        m_tri = new TrisObject(triVertices);
     }
 }

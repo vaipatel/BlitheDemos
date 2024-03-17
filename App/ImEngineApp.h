@@ -1,14 +1,15 @@
 #ifndef IMENGINEAPP_H
 #define IMENGINEAPP_H
 
+#include "ImDemoInterface.h"
+#include <map>
+
 struct ImGuiIO;
 struct ImVec4;
 
 namespace IME
 {
-    class ShaderProgram;
     class Texture;
-    class TrisObject;
 
     class ImEngineApp
     {
@@ -16,18 +17,23 @@ namespace IME
         ImEngineApp();
         ~ImEngineApp();
 
-        void Render(const ImVec4& _clearColor);
-        void DoExistingDemoStuff(ImVec4& _clearColor);
+        void AddDemoFactory(ImDemoFactory* _demoFactory);
+
+        void DrawDemoSelectorUI();
+        void DrawUIForSelectedDemo();
+        void RenderSelectedDemo(const ImVec4& _clearColor, float _aspect);
 
     private:
-        void SetupTriangle();
+        void DoExistingDemoStuff(ImVec4& _clearColor);
 
         bool m_showDemoWindow = true;
         bool m_showAnotherWindow = false;
 
-        ShaderProgram* m_shader = nullptr;
         Texture* m_texture = nullptr;
-        TrisObject* m_tri = nullptr;
+
+        std::map<std::string, ImDemoFactory*> m_demoFactories;
+        ImDemoFactory* m_selectedDemoFactory = nullptr;
+        ImDemoInterface* m_currentDemo = nullptr;
     };
 }
 
