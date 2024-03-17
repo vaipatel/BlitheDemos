@@ -2,6 +2,7 @@
 #include "ImPath.h"
 #include "ShaderProgram.h"
 #include "TrisObject.h"
+#include "UIData.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -45,7 +46,7 @@ namespace IME
     /*!
      * \brief Render the triangle
      */
-    void TriangleDemo::OnRender(float _aspect)
+    void TriangleDemo::OnRender(const UIData& _uiData)
     {
         const float pi = glm::pi<float>();
 
@@ -56,7 +57,7 @@ namespace IME
         m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
-        glm::mat4 matrix = glm::perspective(pi/3.0f, _aspect, 0.1f, 100.0f);
+        glm::mat4 matrix = glm::perspective(pi/3.0f, _uiData.m_aspect, 0.1f, 100.0f);
         matrix = glm::translate(matrix, { 0, 0, -2.0f });
         matrix = glm::rotate(matrix, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
 

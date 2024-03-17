@@ -20,6 +20,8 @@
 
 #include "ImEngineApp.h"
 #include "TriangleDemo.h"
+#include "CubeDemo.h"
+#include "UIData.h"
 
 #include <iostream>
 
@@ -72,7 +74,7 @@ int main(int, char**)
 #endif
 
 	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "OpenGL Demos", nullptr, nullptr);
 	if (window == nullptr)
 		return 1;
 	glfwMakeContextCurrent(window);
@@ -127,6 +129,7 @@ int main(int, char**)
 
 	IME::ImEngineApp myApp;
     myApp.AddDemoFactory(new IME::TriangleDemoFactory());
+    myApp.AddDemoFactory(new IME::CubeDemoFactory());
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -168,7 +171,10 @@ int main(int, char**)
         {
             // Recalculate the aspect ratio
             float aspectRatio = display_w / static_cast<float>(display_h);
-            myApp.RenderSelectedDemo(clear_color, aspectRatio);
+
+            IME::UIData uiData{ clear_color, aspectRatio };
+
+            myApp.RenderSelectedDemo(uiData);
         }
 
         // Render ImGui over OpenGL stuff

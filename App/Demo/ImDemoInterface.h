@@ -5,6 +5,8 @@
 
 namespace IME
 {
+    class UIData;
+
     /*!
      * \brief Interface that demos implement
      */
@@ -12,9 +14,9 @@ namespace IME
     {
     public:
         virtual ~ImDemoInterface() = default;
-        virtual void OnInit() = 0;                //!< Called when the demo is initialized
-        virtual void OnRender(float _aspect) = 0; //!< Called every frame to render the demo
-        virtual void OnImGuiRender() = 0;         //!< Called every frame to render ImGui components
+        virtual void OnInit() = 0;                        //!< Called when the demo is initialized
+        virtual void OnRender(const UIData& _uiData) = 0; //!< Called every frame to render the demo
+        virtual void OnImGuiRender() = 0;                 //!< Called every frame to render ImGui components
     };
 
     /*!

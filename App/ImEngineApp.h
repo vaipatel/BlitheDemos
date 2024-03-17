@@ -2,7 +2,7 @@
 #define IMENGINEAPP_H
 
 #include "ImDemoInterface.h"
-#include <map>
+#include <list>
 
 struct ImGuiIO;
 struct ImVec4;
@@ -10,6 +10,7 @@ struct ImVec4;
 namespace IME
 {
     class Texture;
+    class UIData;
 
     class ImEngineApp
     {
@@ -21,7 +22,7 @@ namespace IME
 
         void DrawDemoSelectorUI();
         void DrawUIForSelectedDemo();
-        void RenderSelectedDemo(const ImVec4& _clearColor, float _aspect);
+        void RenderSelectedDemo(const UIData& _uiData);
 
     private:
         void DoExistingDemoStuff(ImVec4& _clearColor);
@@ -31,7 +32,7 @@ namespace IME
 
         Texture* m_texture = nullptr;
 
-        std::map<std::string, ImDemoFactory*> m_demoFactories;
+        std::list<ImDemoFactory*> m_demoFactories;
         ImDemoFactory* m_selectedDemoFactory = nullptr;
         ImDemoInterface* m_currentDemo = nullptr;
     };

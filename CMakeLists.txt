@@ -79,7 +79,8 @@ find_package(glm QUIET)
 set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.cpp
-    ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
+    ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
+	${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
@@ -90,7 +91,9 @@ set(MY_PROJECT_SOURCES
 
 set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
+	${PROJECT_SOURCE_DIR}/App/UIData.h
     ${PROJECT_SOURCE_DIR}/App/Demo/ImDemoInterface.h
+    ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h

@@ -1,17 +1,17 @@
-#ifndef TRIANGLEDEMO_H
-#define TRIANGLEDEMO_H
+#ifndef CUBEDEMO_H
+#define CUBEDEMO_H
 
 #include "ImDemoInterface.h"
 
 namespace IME
 {
     class ShaderProgram;
-    class TrisObject;
+    class MeshObject;
 
-    class TriangleDemo : public ImDemoInterface
+    class CubeDemo : public ImDemoInterface
     {
     public:
-        ~TriangleDemo() override;
+        ~CubeDemo() override;
 
         void OnInit() override;
 
@@ -20,23 +20,23 @@ namespace IME
         void OnImGuiRender() override;
 
     private:
-        void SetupTriangle();
+        void SetupCube();
 
         ShaderProgram* m_shader = nullptr;
-        TrisObject* m_tri = nullptr;
+        MeshObject* m_cube = nullptr;
         float m_rotationSpeed = 0.5f;
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
         float m_lastFrameTime = 0.0f; // Time at the last frame
 
     };
 
-    class TriangleDemoFactory : public ImDemoFactory
+    class CubeDemoFactory : public ImDemoFactory
     {
     public:
-        ~TriangleDemoFactory() override;
+        ~CubeDemoFactory() override;
         std::string GetName() const override;
         ImDemoInterface* CreateDemo() override;
     };
 }
 
-#endif //TRIANGLEDEMO_H
+#endif //CUBEDEMO_H

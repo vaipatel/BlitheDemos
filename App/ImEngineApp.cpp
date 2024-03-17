@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <algorithm>
 #include <stdio.h>
 
 #define GL_SILENCE_DEPRECATION
@@ -14,6 +15,7 @@
 
 #include "ImPath.h"
 #include "Texture.h"
+#include "UIData.h"
 
 namespace IME
 {
@@ -28,9 +30,9 @@ namespace IME
     {
         delete m_texture;
 
-        for (auto& nameAndFac : m_demoFactories)
+        for (ImDemoFactory* fac : m_demoFactories)
         {
-            delete nameAndFac.second;
+            delete fac;
         }
         m_demoFactories.clear();
 
@@ -42,24 +44,24 @@ namespace IME
         ASSERT(_demoFactory, "Demo factory cannot be null");
 
         std::string name = _demoFactory->GetName();
-        bool noDupe = m_demoFactories.find(name) == m_demoFactories.end();
+        bool noDupe = std::find_if(std::begin(m_demoFactories), std::end(m_demoFactories), [name](ImDemoFactory* _fac) { return name == _fac->GetName(); }) == std::end(m_demoFactories);
         ASSERT(noDupe, "Demo factory with name " << name << " has already been added");
 
-        m_demoFactories.insert({ name, _demoFactory });
+        m_demoFactories.push_back(_demoFactory);
     }
 
     void ImEngineApp::DrawDemoSelectorUI()
     {
         ImGui::Begin("Demo Selector");
 
-        for (auto& demo : m_demoFactories)
+        for (ImDemoFactory* demo : m_demoFactories)
         {
             // Use the demo's name as the selectable label
-            if (ImGui::Selectable(demo.first.c_str(), m_selectedDemoFactory == demo.second))
+            if (ImGui::Selectable(demo->GetName().c_str(), m_selectedDemoFactory == demo))
             {
                 delete m_currentDemo;
 
-                m_selectedDemoFactory = demo.second;
+                m_selectedDemoFactory = demo;
                 m_currentDemo = m_selectedDemoFactory->CreateDemo(); // Set the current demo
                 m_currentDemo->OnInit();
             }
@@ -76,11 +78,11 @@ namespace IME
         }
     }
 
-    void ImEngineApp::RenderSelectedDemo(const ImVec4& _clearColor, float _aspect)
+    void ImEngineApp::RenderSelectedDemo(const UIData& _uiData)
     {
         if (m_currentDemo)
         {
-            m_currentDemo->OnRender(_aspect);
+            m_currentDemo->OnRender(_uiData);
         }
     }
 
