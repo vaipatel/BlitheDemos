@@ -63,7 +63,7 @@ namespace IME
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
-        m_tri->Draw();
+        m_tri->Render();
 
         m_shader->Unbind();
     }

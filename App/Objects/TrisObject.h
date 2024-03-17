@@ -15,10 +15,12 @@ namespace IME
     public:
         TrisObject(const std::vector<Tri>& _tris);
         ~TrisObject();
-        void Draw();
-        void CleanUp();
+
+        void Render();
 
     private:
+        void CleanUp();
+
         unsigned int m_vao; //!< ID of Vertex Array Object holding the vertex layout
         unsigned int m_vbo; //!< ID of Vertex Buffer Object holding the vertex data
         size_t m_numTris;   //!< Number of triangles

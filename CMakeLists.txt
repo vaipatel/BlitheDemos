@@ -83,6 +83,7 @@ set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
+    ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
 	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.cpp
 )
@@ -91,12 +92,14 @@ set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
     ${PROJECT_SOURCE_DIR}/App/Demo/ImDemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Vertex.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.h
 	${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
+    ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.h
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/App/Utils/ImAssert.h
 	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
