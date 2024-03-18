@@ -7,6 +7,7 @@ namespace IME
 {
     class ShaderProgram;
     class MeshObject;
+    class Texture;
 
     class CubeDemo : public ImDemoInterface
     {
@@ -24,9 +25,13 @@ namespace IME
 
         ShaderProgram* m_shader = nullptr;
         MeshObject* m_cube = nullptr;
-        float m_rotationSpeed = 0.5f;
+        Texture* m_texture = nullptr;
+        float m_rotationSpeed = 0.5f;   //!< Value from UI control for the Rotation Speed
+        bool m_useCustomAspect = false; //!< Value from UI control for whether the custom aspect ratio is used
+        float m_customAspect = 1.0f;    //!< Value from UI control for the custom aspect ratio
+
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
-        float m_lastFrameTime = 0.0f; // Time at the last frame
+        float m_lastFrameTime = 0.0f;    // Time at the last frame
 
     };
 

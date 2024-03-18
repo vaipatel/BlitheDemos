@@ -13,23 +13,17 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#include "ImPath.h"
-#include "Texture.h"
+#include "ImAssert.h"
 #include "UIData.h"
 
 namespace IME
 {
     ImEngineApp::ImEngineApp()
     {
-        std::string exePath = GetExecutablePath();
-        m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
-        
     }
 
     ImEngineApp::~ImEngineApp()
     {
-        delete m_texture;
-
         for (ImDemoFactory* fac : m_demoFactories)
         {
             delete fac;

@@ -1,7 +1,8 @@
 #include "CubeDemo.h"
 #include "ImPath.h"
-#include "ShaderProgram.h"
 #include "MeshObject.h"
+#include "ShaderProgram.h"
+#include "Texture.h"
 #include "UIData.h"
 
 #include "imgui.h"
@@ -28,8 +29,9 @@ namespace IME
     CubeDemo::~CubeDemo()
     {
         glDisable(GL_DEPTH_TEST);
-        delete m_shader;
         delete m_cube;
+        delete m_shader;
+        delete m_texture;
     }
 
     /*!
@@ -38,6 +40,7 @@ namespace IME
     void CubeDemo::OnInit()
     {
         std::string exePath = GetExecutablePath();
+        m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
         SetupCube();
 
@@ -69,7 +72,8 @@ namespace IME
         model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.5f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.5f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
-        projection = glm::perspective(glm::radians(45.0f), _uiData.m_aspect, 0.1f, 100.0f);
+        float aspect = m_useCustomAspect ? m_customAspect : _uiData.m_aspect;
+        projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
         glm::mat4 matrix = projection * view * model; // I just mat mult here as opposed to per vertex in the shader
 
         m_shader->Bind();
@@ -89,7 +93,24 @@ namespace IME
     {
         ImGui::Begin("Cube Demo Params");
 
+        // Slider for Rotation Speed
         ImGui::SliderFloat("Rotation Speed", &m_rotationSpeed, 0.0f, 1.0f);
+
+        // Checkbox for enabling/disabling custom aspect ratio
+        ImGui::Checkbox("Custom Aspect", &m_useCustomAspect);
+
+        // Disable the slider if the checkbox is not checked
+        if (!m_useCustomAspect) {
+            ImGui::BeginDisabled();
+        }
+
+        // Slider for custom aspect ratio
+        ImGui::SliderFloat("Aspect Ratio", &m_customAspect, 0.1f, 4.0f, "%.2f");
+
+        // End disabled state if it was begun
+        if (!m_useCustomAspect) {
+            ImGui::EndDisabled();
+        }
 
         ImGui::End();
     }

@@ -9,7 +9,6 @@ struct ImVec4;
 
 namespace IME
 {
-    class Texture;
     class UIData;
 
     class ImEngineApp
@@ -29,8 +28,6 @@ namespace IME
 
         bool m_showDemoWindow = true;
         bool m_showAnotherWindow = false;
-
-        Texture* m_texture = nullptr;
 
         std::list<ImDemoFactory*> m_demoFactories;
         ImDemoFactory* m_selectedDemoFactory = nullptr;
