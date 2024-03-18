@@ -17,7 +17,14 @@ find_package(OpenGL REQUIRED)
 find_package(GLFW3 QUIET)
 
 if(NOT GLFW3_FOUND) # GLFW not found, use the fallback
-    message(STATUS "GLFW3 not found with find_package. Using precompiled binaries as a fallback.")
+    message(STATUS "GLFW3 not found with find_package. Using precompiled MSVC binaries as a fallback.")
+
+    # Only MSVC fallback supported for now
+    if (MSVC)
+        message(STATUS "MSCV version is ${MSVC_VERSION}")
+    else()
+        message(FATAL_ERROR "MSVC compiler not detected. Only precompiled MSVC binaries supported as fallback for GLFW3")
+    endif()
 
 	set(GLFW3_FALLBACK_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/glfw/glfw-3.3.8.bin.WIN64" CACHE PATH "Fallback User Path to GLFW3")
 
@@ -27,7 +34,7 @@ if(NOT GLFW3_FOUND) # GLFW not found, use the fallback
     # Select the correct library path based on MSVC version
     if(MSVC_VERSION EQUAL 1900)
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2015")
-    elseif(MSVC_VERSION EQUAL 1910)
+    elseif(MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2017")
     elseif(MSVC_VERSION EQUAL 1920)
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2019")
@@ -80,18 +87,18 @@ set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
-	${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
+    ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
-	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.cpp
+    ${PROJECT_SOURCE_DIR}/App/Utils/ImPath.cpp
 )
 
 set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
-	${PROJECT_SOURCE_DIR}/App/UIData.h
+    ${PROJECT_SOURCE_DIR}/App/UIData.h
     ${PROJECT_SOURCE_DIR}/App/Demo/ImDemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
@@ -101,12 +108,12 @@ set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.h
-	${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.h
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/App/Utils/ImAssert.h
-	${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
-	${PROJECT_SOURCE_DIR}/App/Utils/ImStrUtils.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/ImStrUtils.h
 )
 
 # My shaders
