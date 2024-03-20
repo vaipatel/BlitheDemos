@@ -95,6 +95,7 @@ namespace IME
     void Texture::Construct(const TextureData& _textureData)
     {
         ASSERT(_textureData.m_type != GL_NONE, "Texture type cannot be none.");
+		ASSERT(_textureData.m_width > 0 && _textureData.m_height > 0, "Texture width/height cannot be 0. Got width " << _textureData.m_width << ", height " << _textureData.m_height);
 
         glGenTextures(1, &m_handle);
 

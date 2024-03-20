@@ -19,6 +19,7 @@ namespace IME
         ~RenderTarget();
 
         void Bind();
+		void UnBind();
         void CleanUp();
 
         unsigned int GetTargetFBO() const { return m_targetFBO; }

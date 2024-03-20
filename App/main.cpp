@@ -154,9 +154,9 @@ int main(int, char**)
 		ImGui::NewFrame();
 
         // ImGui windows
-        myApp.DrawDemoSelectorUI();
+        myApp.DrawUI();
 
-        myApp.DrawUIForSelectedDemo();
+        //myApp.DrawUIForSelectedDemo();
 
 		// Rendering
 		ImGui::Render();

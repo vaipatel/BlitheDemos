@@ -15,8 +15,10 @@ namespace IME
     public:
         virtual ~ImDemoInterface() = default;
         virtual void OnInit() = 0;                        //!< Called when the demo is initialized
-        virtual void OnRender(const UIData& _uiData) = 0; //!< Called every frame to render the demo
+        virtual void OnRender(const UIData& _uiData,
+			                  const UIData* _defaultViewPortUIData = nullptr) = 0; //!< Called every frame to render the demo
         virtual void OnImGuiRender() = 0;                 //!< Called every frame to render ImGui components
+		virtual bool UsesDefaultScene() const = 0;        //!< Whether this demo would like to render to default scene
     };
 
     /*!

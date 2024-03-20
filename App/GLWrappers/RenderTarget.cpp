@@ -22,11 +22,12 @@ namespace IME
 
         // Is this how we do depth? Or we pass in a texture with some "depth" format? I don't know.
         // But if we do we'll probably have to have GL_NONE attachment in the draw buffers below
-    //    GLuint renderBuffer;
-    //    glGenRenderbuffers(1, &renderBuffer);
-    //    glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
-    //    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewWidth, viewHeight);
-    //    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBuffer);
+		// This seems to work for the default viewport render target, but no idea how well it generalizes.
+        GLuint renderBuffer;
+        glGenRenderbuffers(1, &renderBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _width, _height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBuffer);
 
         // I've done the setup of the framebuffer texture as a loop, pretending like I
         // might have multiple color attachment textures in the future.
@@ -65,6 +66,7 @@ namespace IME
     void RenderTarget::Bind()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO);
+
         if (m_depthTestEnabled)
         {
             glEnable(GL_DEPTH_TEST);
@@ -78,11 +80,17 @@ namespace IME
             GLclampf a = static_cast<GLclampf>(m_clearColor.a);
             glClearColor(r, g, b, a);
         }
+
         if (m_clearMask != 0)
         {
             glClear(m_clearMask);
         }
     }
+
+	void RenderTarget::UnBind()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 
     /*!
      * \brief Cleans up the framebuffer and target texture.

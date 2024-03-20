@@ -15,9 +15,11 @@ namespace IME
 
         void OnInit() override;
 
-        void OnRender(const UIData& _uiData) override;
+        void OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData = nullptr) override;
 
         void OnImGuiRender() override;
+
+		bool UsesDefaultScene() const override { return true;  }
 
     private:
         void SetupTriangle();

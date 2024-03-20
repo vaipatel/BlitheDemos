@@ -50,10 +50,11 @@ namespace IME
     /*!
      * \brief Render the cube
      */
-    void CubeDemo::OnRender(const UIData& _uiData)
+    void CubeDemo::OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData/* = nullptr*/)
     {
         glEnable(GL_DEPTH_TEST);
-        glClearColor(_uiData.m_clearColor.x * _uiData.m_clearColor.w, _uiData.m_clearColor.y * _uiData.m_clearColor.w, _uiData.m_clearColor.z * _uiData.m_clearColor.w, _uiData.m_clearColor.w);
+		ImVec4 clearCol = _defaultViewPortUIData ? _defaultViewPortUIData->m_clearColor : _uiData.m_clearColor;
+        glClearColor(clearCol.x * clearCol.w, clearCol.y * clearCol.w, clearCol.z * clearCol.w, clearCol.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const float pi = glm::pi<float>();
@@ -72,7 +73,7 @@ namespace IME
         model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.5f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.5f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
-        float aspect = m_useCustomAspect ? m_customAspect : _uiData.m_aspect;
+        float aspect = m_useCustomAspect ? m_customAspect : (_defaultViewPortUIData ? _defaultViewPortUIData->m_aspect : _uiData.m_aspect);
         projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
         glm::mat4 matrix = projection * view * model; // I just mat mult here as opposed to per vertex in the shader
 

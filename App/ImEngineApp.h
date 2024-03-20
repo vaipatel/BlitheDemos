@@ -5,10 +5,12 @@
 #include <list>
 
 struct ImGuiIO;
+struct ImVec2;
 struct ImVec4;
 
 namespace IME
 {
+	class RenderTarget;
     class UIData;
 
     class ImEngineApp
@@ -19,11 +21,15 @@ namespace IME
 
         void AddDemoFactory(ImDemoFactory* _demoFactory);
 
-        void DrawDemoSelectorUI();
-        void DrawUIForSelectedDemo();
+        void DrawUI();
         void RenderSelectedDemo(const UIData& _uiData);
 
     private:
+		void SelectDemo(ImDemoFactory* _demoFactory);
+		void DrawUIForSelectedDemo();
+		void ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize);
+		void StartDockSpace();
+		void EndDockSpace();
         void DoExistingDemoStuff(ImVec4& _clearColor);
 
         bool m_showDemoWindow = true;
@@ -32,6 +38,7 @@ namespace IME
         std::list<ImDemoFactory*> m_demoFactories;
         ImDemoFactory* m_selectedDemoFactory = nullptr;
         ImDemoInterface* m_currentDemo = nullptr;
+		RenderTarget* m_target = nullptr;
     };
 }
 
