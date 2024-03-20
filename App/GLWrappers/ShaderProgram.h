@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
-namespace IME
+namespace BLE
 {
     /*!
     * \brief Handles the creation, binding/unbinding, uniform settings, destruction of shader programs.

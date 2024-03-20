@@ -3,7 +3,7 @@
 
 #include <glad/glad.h>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Data needed for constructing a texture

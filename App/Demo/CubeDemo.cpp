@@ -1,5 +1,5 @@
 #include "CubeDemo.h"
-#include "ImPath.h"
+#include "BlithePath.h"
 #include "MeshObject.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
@@ -21,7 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Destructor
@@ -94,7 +94,7 @@ namespace IME
     /*!
      * \brief ImGui controls specific to the cube demo
      */
-    void CubeDemo::OnImGuiRender()
+    void CubeDemo::OnDrawUI()
     {
         ImGui::Begin("Cube Demo Params");
 
@@ -206,7 +206,7 @@ namespace IME
      * 
      * \return A new CubeDemo
      */
-    ImDemoInterface * CubeDemoFactory::CreateDemo()
+    DemoInterface * CubeDemoFactory::CreateDemo()
     {
         return new CubeDemo();
     }

@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-namespace IME
+namespace BLE
 {
     class Texture;
 

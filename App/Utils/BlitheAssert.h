@@ -1,5 +1,5 @@
-#ifndef IMASSERT_H
-#define IMASSERT_H
+#ifndef BLITHEASSERT_H
+#define BLITHEASSERT_H
 
 #include <iostream>
 
@@ -19,4 +19,4 @@
     #define ASSERT(condition, message) do { } while (false)
 #endif
 
-#endif // IMASSERT_H
+#endif // BLITHEASSERT_H

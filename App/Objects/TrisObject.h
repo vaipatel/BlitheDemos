@@ -4,7 +4,7 @@
 #include "Tri.h"
 #include <vector>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Renderable triangle soup object.

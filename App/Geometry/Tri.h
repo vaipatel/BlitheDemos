@@ -3,7 +3,7 @@
 
 #include "Vertex.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * Represents a triangle composed of 3 vertices.

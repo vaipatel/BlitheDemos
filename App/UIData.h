@@ -3,7 +3,7 @@
 
 #include "imgui.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief UI data passed from main to demos

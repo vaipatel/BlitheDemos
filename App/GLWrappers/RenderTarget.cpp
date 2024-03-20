@@ -1,8 +1,8 @@
 #include "RenderTarget.h"
-#include "ImAssert.h"
+#include "BlitheAssert.h"
 #include "Texture.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Constructor that creates a texture and a framebuffer that targets it.

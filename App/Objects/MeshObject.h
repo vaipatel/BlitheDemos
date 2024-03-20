@@ -3,7 +3,7 @@
 
 #include "Mesh.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Renderable triangle mesh.

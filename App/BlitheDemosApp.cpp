@@ -1,4 +1,4 @@
-#include "ImEngineApp.h"
+#include "BlitheDemosApp.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -13,20 +13,20 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#include "ImAssert.h"
+#include "BlitheAssert.h"
 #include "RenderTarget.h"
 #include "Texture.h"
 #include "UIData.h"
 
-namespace IME
+namespace BLE
 {
-    ImEngineApp::ImEngineApp()
+    BlitheDemosApp::BlitheDemosApp()
     {
     }
 
-    ImEngineApp::~ImEngineApp()
+    BlitheDemosApp::~BlitheDemosApp()
     {
-        for (ImDemoFactory* fac : m_demoFactories)
+        for (DemoFactory* fac : m_demoFactories)
         {
             delete fac;
         }
@@ -36,25 +36,25 @@ namespace IME
 		delete m_target;
     }
 
-    void ImEngineApp::AddDemoFactory(ImDemoFactory* _demoFactory)
+    void BlitheDemosApp::AddDemoFactory(DemoFactory* _demoFactory)
     {
         ASSERT(_demoFactory, "Demo factory cannot be null");
 
         std::string name = _demoFactory->GetName();
-        bool noDupe = std::find_if(std::begin(m_demoFactories), std::end(m_demoFactories), [name](ImDemoFactory* _fac) { return name == _fac->GetName(); }) == std::end(m_demoFactories);
+        bool noDupe = std::find_if(std::begin(m_demoFactories), std::end(m_demoFactories), [name](DemoFactory* _fac) { return name == _fac->GetName(); }) == std::end(m_demoFactories);
         ASSERT(noDupe, "Demo factory with name " << name << " has already been added");
 
         m_demoFactories.push_back(_demoFactory);
     }
 
-    void ImEngineApp::DrawUI()
+    void BlitheDemosApp::DrawUI()
     {
 		StartDockSpace();
 
 		//----
         ImGui::Begin("Demo Selector");
 
-        for (ImDemoFactory* demoFac : m_demoFactories)
+        for (DemoFactory* demoFac : m_demoFactories)
         {
             // Use the demo's name as the selectable label
             if (ImGui::Selectable(demoFac->GetName().c_str(), m_selectedDemoFactory == demoFac))
@@ -68,10 +68,10 @@ namespace IME
 		DrawUIForSelectedDemo();
 		//----
 
-		ImGui::End();
+        EndDockSpace();
     }
 
-    void ImEngineApp::RenderSelectedDemo(const UIData& _uiData)
+    void BlitheDemosApp::RenderSelectedDemo(const UIData& _uiData)
     {
 		UIData* defaultViewPortUIData = nullptr;
         if (m_currentDemo)
@@ -106,7 +106,7 @@ namespace IME
 		delete defaultViewPortUIData;
     }
 
-	void ImEngineApp::SelectDemo(ImDemoFactory* _demoFactory)
+	void BlitheDemosApp::SelectDemo(DemoFactory* _demoFactory)
 	{
 		delete m_currentDemo;
 
@@ -115,7 +115,7 @@ namespace IME
 		m_currentDemo->OnInit();
 	}
 
-	void ImEngineApp::DrawUIForSelectedDemo()
+	void BlitheDemosApp::DrawUIForSelectedDemo()
 	{
 		if (m_currentDemo)
 		{
@@ -148,11 +148,11 @@ namespace IME
 				ImGui::End();
 			}
 
-			m_currentDemo->OnImGuiRender();
+			m_currentDemo->OnDrawUI();
 		}
 	}
 
-	void ImEngineApp::ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize)
+	void BlitheDemosApp::ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize)
 	{
 		if (m_target)
 		{
@@ -195,7 +195,7 @@ namespace IME
 	///        stole from TheCherno going over the ImGui DockSpace example in 
 	///        "BEST WAY to make Desktop Applications in C++" https://www.youtube.com/watch?v=vWXrFetSH8w
 	///
-	void ImEngineApp::StartDockSpace()
+	void BlitheDemosApp::StartDockSpace()
 	{
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
@@ -275,12 +275,12 @@ namespace IME
 	/// \brief A bit awkward, but ends what StartDockSpace() started.
 	///        Crucially, all the other UI stuff should go between StartDockSpace() and EndDockSpace().
 	///
-	void ImEngineApp::EndDockSpace()
+	void BlitheDemosApp::EndDockSpace()
 	{
 		ImGui::End();
 	}
 
-    void ImEngineApp::DoExistingDemoStuff(ImVec4& _clearColor)
+    void BlitheDemosApp::DoExistingDemoStuff(ImVec4& _clearColor)
     {
         ImGuiIO& io = ImGui::GetIO();
 

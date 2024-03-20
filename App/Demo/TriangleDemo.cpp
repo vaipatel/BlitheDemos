@@ -1,5 +1,5 @@
 #include "TriangleDemo.h"
-#include "ImPath.h"
+#include "BlithePath.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "TrisObject.h"
@@ -21,7 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Destructor
@@ -80,7 +80,7 @@ namespace IME
     /*!
      * \brief ImGui controls specific to the triangle demo
      */
-    void TriangleDemo::OnImGuiRender()
+    void TriangleDemo::OnDrawUI()
     {
         ImGui::Begin("Triangle Demo Params");
 
@@ -127,7 +127,7 @@ namespace IME
      * 
      * \return A new TriangleDemo
      */
-    ImDemoInterface * TriangleDemoFactory::CreateDemo()
+    DemoInterface * TriangleDemoFactory::CreateDemo()
     {
         return new TriangleDemo();
     }

@@ -1,15 +1,15 @@
 #ifndef TRIANGLEDEMO_H
 #define TRIANGLEDEMO_H
 
-#include "ImDemoInterface.h"
+#include "DemoInterface.h"
 
-namespace IME
+namespace BLE
 {
     class ShaderProgram;
 	class Texture;
     class TrisObject;
 
-    class TriangleDemo : public ImDemoInterface
+    class TriangleDemo : public DemoInterface
     {
     public:
         ~TriangleDemo() override;
@@ -18,7 +18,7 @@ namespace IME
 
         void OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData = nullptr) override;
 
-        void OnImGuiRender() override;
+        void OnDrawUI() override;
 
 		bool UsesDefaultScene() const override { return true;  }
 
@@ -34,12 +34,12 @@ namespace IME
 
     };
 
-    class TriangleDemoFactory : public ImDemoFactory
+    class TriangleDemoFactory : public DemoFactory
     {
     public:
         ~TriangleDemoFactory() override;
         std::string GetName() const override;
-        ImDemoInterface* CreateDemo() override;
+        DemoInterface* CreateDemo() override;
     };
 }
 

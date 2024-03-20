@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "ImAssert.h"
+#include "BlitheAssert.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Constructor. Compiles the vertex shader at _vertexPath and fragment shader at

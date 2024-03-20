@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(ImEngine)
+project(BlitheDemos)
 
 set (CMAKE_CXX_STANDARD 11)
 
@@ -26,7 +26,7 @@ if(NOT GLFW3_FOUND) # GLFW not found, use the fallback
         message(FATAL_ERROR "MSVC compiler not detected. Only precompiled MSVC binaries supported as fallback for GLFW3")
     endif()
 
-	set(GLFW3_FALLBACK_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/glfw/glfw-3.3.8.bin.WIN64" CACHE PATH "Fallback User Path to GLFW3")
+	set(GLFW3_FALLBACK_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/glfw/glfw-3.3.8.bin.WIN64" CACHE PATH "Fallback User Path to GLFW3")
 
     # Include directory
     include_directories(${GLFW3_FALLBACK_DIR}/include)
@@ -54,11 +54,11 @@ endif()
 
 
 # Glad
-set(GLAD_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/glad" CACHE PATH "User Path to GLAD")
+set(GLAD_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/glad" CACHE PATH "User Path to GLAD")
 include_directories(${GLAD_DIR}/include)
 
 # ImGui
-set(IMGUI_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/imgui" CACHE PATH "User Path to ImGui")
+set(IMGUI_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/imgui" CACHE PATH "User Path to ImGui")
 file(GLOB IMGUI_SOURCES 
     ${IMGUI_DIR}/*.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
@@ -76,16 +76,16 @@ target_include_directories(imgui PUBLIC ${IMGUI_DIR})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR}/backends)
 
 # stb
-set(STB_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/stb" CACHE PATH "User Path to stb")
+set(STB_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/stb" CACHE PATH "User Path to stb")
 include_directories(${STB_DIR})
 
 # GLM
 find_package(glm QUIET)
 
 # My sources and headers
-set(MY_PROJECT_SOURCES
+set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
-    ${PROJECT_SOURCE_DIR}/App/ImEngineApp.cpp
+    ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
@@ -93,13 +93,13 @@ set(MY_PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
-    ${PROJECT_SOURCE_DIR}/App/Utils/ImPath.cpp
+    ${PROJECT_SOURCE_DIR}/App/Utils/BlithePath.cpp
 )
 
-set(MY_PROJECT_HEADERS
-    ${PROJECT_SOURCE_DIR}/App/ImEngineApp.h
+set(BLITHE_DEMOS_HEADERS
+    ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.h
     ${PROJECT_SOURCE_DIR}/App/UIData.h
-    ${PROJECT_SOURCE_DIR}/App/Demo/ImDemoInterface.h
+    ${PROJECT_SOURCE_DIR}/App/Demo/DemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
@@ -111,78 +111,78 @@ set(MY_PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.h
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
-    ${PROJECT_SOURCE_DIR}/App/Utils/ImAssert.h
-    ${PROJECT_SOURCE_DIR}/App/Utils/ImPath.h
-    ${PROJECT_SOURCE_DIR}/App/Utils/ImStrUtils.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/BlitheAssert.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/BlithePath.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/BlitheStrUtils.h
 )
 
 # My shaders
-file(GLOB MY_PROJECT_SHADERS 
+file(GLOB BLITHE_DEMOS_SHADERS 
     "${PROJECT_SOURCE_DIR}/App/Shaders/*.vert"
     "${PROJECT_SOURCE_DIR}/App/Shaders/*.frag"
 )
 
 # My shaders
-file(GLOB MY_PROJECT_ASSETS 
+file(GLOB BLITHE_DEMOS_ASSETS 
     "${PROJECT_SOURCE_DIR}/Assets/*.jpg"
 )
 
 # Add main executable
-add_executable(ImEngine ${MY_PROJECT_SOURCES} ${MY_PROJECT_HEADERS} ${GLAD_DIR}/src/glad.c)
+add_executable(BlitheDemos ${BLITHE_DEMOS_SOURCES} ${BLITHE_DEMOS_HEADERS} ${GLAD_DIR}/src/glad.c)
 
 # Organize source files into groups
-source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Source Files" FILES ${MY_PROJECT_SOURCES})
-source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Header Files" FILES ${MY_PROJECT_HEADERS})
-source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Shaders" FILES ${MY_PROJECT_SHADERS})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Source Files" FILES ${BLITHE_DEMOS_SOURCES})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Header Files" FILES ${BLITHE_DEMOS_HEADERS})
+source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Shaders" FILES ${BLITHE_DEMOS_SHADERS})
 
 # Include directories
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Demo)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Geometry)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrappers)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
-target_include_directories(ImEngine PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Demo)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Geometry)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrappers)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
 
 # Add shaders to the executable only for them to show up in IDEs
-target_sources(ImEngine PRIVATE ${MY_PROJECT_SHADERS})
+target_sources(BlitheDemos PRIVATE ${BLITHE_DEMOS_SHADERS})
 
 if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up include directories
     message(STATUS "GLM not found on the system. Using the bundled version.")
 	
-    set(GLM_FALLBACK_DIR "${PROJECT_SOURCE_DIR}/../ImEngineVendors/glm-0.9.9.8" CACHE PATH "Fallback User Path to glm")
+    set(GLM_FALLBACK_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/glm-0.9.9.8" CACHE PATH "Fallback User Path to glm")
 
-    target_include_directories(ImEngine PRIVATE ${GLM_FALLBACK_DIR})
+    target_include_directories(BlitheDemos PRIVATE ${GLM_FALLBACK_DIR})
 endif()
 
 # Link against GLFW
-target_link_libraries(ImEngine PRIVATE ${GLFW_LIBRARY} imgui)
-target_link_libraries(ImEngine PRIVATE OpenGL::GL)
+target_link_libraries(BlitheDemos PRIVATE ${GLFW_LIBRARY} imgui)
+target_link_libraries(BlitheDemos PRIVATE OpenGL::GL)
 
 # Copy the GLFW DLL to the output directory if using the fallback
 if(NOT GLFW3_FOUND AND EXISTS "${GLFW_DLL}")
-    add_custom_command(TARGET ImEngine POST_BUILD
+    add_custom_command(TARGET BlitheDemos POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${GLFW_DLL}"
-        $<TARGET_FILE_DIR:ImEngine>)
+        $<TARGET_FILE_DIR:BlitheDemos>)
 endif()
 
 # Create a "Shaders" directory in the output directory (where the executable is)
 # and copy shader files there
-foreach(SHADER ${MY_PROJECT_SHADERS})
+foreach(SHADER ${BLITHE_DEMOS_SHADERS})
     get_filename_component(SHADER_NAME ${SHADER} NAME)
-    add_custom_command(TARGET ImEngine POST_BUILD
+    add_custom_command(TARGET BlitheDemos POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${SHADER}
-                $<TARGET_FILE_DIR:ImEngine>/Shaders/${SHADER_NAME})
+                $<TARGET_FILE_DIR:BlitheDemos>/Shaders/${SHADER_NAME})
 endforeach()
 
 # Create a "Assets" directory in the output directory (where the executable is)
 # and copy asset files there
-foreach(ASSET ${MY_PROJECT_ASSETS})
+foreach(ASSET ${BLITHE_DEMOS_ASSETS})
     get_filename_component(ASSET_NAME ${ASSET} NAME)
-    add_custom_command(TARGET ImEngine POST_BUILD
+    add_custom_command(TARGET BlitheDemos POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ASSET}
-                $<TARGET_FILE_DIR:ImEngine>/Assets/${ASSET_NAME})
+                $<TARGET_FILE_DIR:BlitheDemos>/Assets/${ASSET_NAME})
 endforeach()

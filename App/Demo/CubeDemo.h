@@ -1,15 +1,15 @@
 #ifndef CUBEDEMO_H
 #define CUBEDEMO_H
 
-#include "ImDemoInterface.h"
+#include "DemoInterface.h"
 
-namespace IME
+namespace BLE
 {
     class ShaderProgram;
     class MeshObject;
     class Texture;
 
-    class CubeDemo : public ImDemoInterface
+    class CubeDemo : public DemoInterface
     {
     public:
         ~CubeDemo() override;
@@ -18,7 +18,7 @@ namespace IME
 
         void OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData = nullptr) override;
 
-        void OnImGuiRender() override;
+        void OnDrawUI() override;
 
 		bool UsesDefaultScene() const override { return true; }
 
@@ -37,12 +37,12 @@ namespace IME
 
     };
 
-    class CubeDemoFactory : public ImDemoFactory
+    class CubeDemoFactory : public DemoFactory
     {
     public:
         ~CubeDemoFactory() override;
         std::string GetName() const override;
-        ImDemoInterface* CreateDemo() override;
+        DemoInterface* CreateDemo() override;
     };
 }
 

@@ -4,7 +4,7 @@
 #include "Vertex.h"
 #include <vector>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Simple mesh class describing a list of vertices and indices into the

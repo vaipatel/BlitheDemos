@@ -1,11 +1,11 @@
-#ifndef IMSTRUTILS_H
-#define IMSTRUTILS_H
+#ifndef BLITHESTRUTILS_H
+#define BLITHESTRUTILS_H
 
 #include <iomanip>
 #include <sstream>
 #include <string>
 
-namespace IME
+namespace BLE
 {
     /*!
     * \brief Returns the string representing the input integer _i in hex.
@@ -25,4 +25,4 @@ namespace IME
     }
 }
 
-#endif // IMSTRUTILS_H
+#endif // BLITHESTRUTILS_H

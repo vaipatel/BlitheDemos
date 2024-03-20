@@ -1,10 +1,10 @@
 #include "Texture.h"
-#include "ImStrUtils.h"
+#include "BlitheStrUtils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Constructs a texture with the given params and _data.
@@ -252,7 +252,7 @@ namespace IME
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << IME::IntToHex(_internalFormat));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_internalFormat));
 
         return format;
     }
@@ -291,7 +291,7 @@ namespace IME
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << IME::IntToHex(_format));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_format));
 
         return numComponents;
     }
@@ -327,7 +327,7 @@ namespace IME
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << IME::IntToHex(_type));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_type));
 
         return componentSize;
     }
@@ -392,7 +392,7 @@ namespace IME
             break;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << IME::IntToHex(_format));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_format));
 
         return internalFormat;
     }

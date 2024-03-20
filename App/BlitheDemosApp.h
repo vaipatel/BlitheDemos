@@ -1,31 +1,34 @@
-#ifndef IMENGINEAPP_H
-#define IMENGINEAPP_H
+#ifndef DEMOSTUDIOAPP_H
+#define DEMOSTUDIOAPP_H
 
-#include "ImDemoInterface.h"
+#include "DemoInterface.h"
 #include <list>
 
 struct ImGuiIO;
 struct ImVec2;
 struct ImVec4;
 
-namespace IME
+namespace BLE
 {
 	class RenderTarget;
     class UIData;
 
-    class ImEngineApp
+    /*!
+     * \brief Hosts the demos.
+     */
+    class BlitheDemosApp
     {
     public:
-        ImEngineApp();
-        ~ImEngineApp();
+        BlitheDemosApp();
+        ~BlitheDemosApp();
 
-        void AddDemoFactory(ImDemoFactory* _demoFactory);
+        void AddDemoFactory(DemoFactory* _demoFactory);
 
         void DrawUI();
         void RenderSelectedDemo(const UIData& _uiData);
 
     private:
-		void SelectDemo(ImDemoFactory* _demoFactory);
+		void SelectDemo(DemoFactory* _demoFactory);
 		void DrawUIForSelectedDemo();
 		void ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize);
 		void StartDockSpace();
@@ -35,11 +38,11 @@ namespace IME
         bool m_showDemoWindow = true;
         bool m_showAnotherWindow = false;
 
-        std::list<ImDemoFactory*> m_demoFactories;
-        ImDemoFactory* m_selectedDemoFactory = nullptr;
-        ImDemoInterface* m_currentDemo = nullptr;
+        std::list<DemoFactory*> m_demoFactories;
+        DemoFactory* m_selectedDemoFactory = nullptr;
+        DemoInterface* m_currentDemo = nullptr;
 		RenderTarget* m_target = nullptr;
     };
 }
 
-#endif // IMENGINEAPP_H
+#endif // DEMOSTUDIOAPP_H

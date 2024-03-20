@@ -1,10 +1,10 @@
 #include "TrisObject.h"
-
 #include "ShaderProgram.h"
+
 #include <glad/glad.h>
 #include <numeric>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Constructor that creates the VBO and VAO for the given _tris soup.

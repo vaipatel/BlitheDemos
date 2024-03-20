@@ -1,10 +1,10 @@
 #include "MeshObject.h"
-#include "ImAssert.h"
+#include "BlitheAssert.h"
 #include "ShaderProgram.h"
 #include <glad/glad.h>
 #include <numeric>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Constructor. Creates the VAO, VBO and EBO for the _mesh.

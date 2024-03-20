@@ -18,7 +18,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#include "ImEngineApp.h"
+#include "BlitheDemosApp.h"
 #include "TriangleDemo.h"
 #include "CubeDemo.h"
 #include "UIData.h"
@@ -74,7 +74,7 @@ int main(int, char**)
 #endif
 
 	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "OpenGL Demos", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "Blithe OpenGL Demos", nullptr, nullptr);
 	if (window == nullptr)
 		return 1;
 	glfwMakeContextCurrent(window);
@@ -127,9 +127,9 @@ int main(int, char**)
 	// Our state
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	IME::ImEngineApp myApp;
-    myApp.AddDemoFactory(new IME::TriangleDemoFactory());
-    myApp.AddDemoFactory(new IME::CubeDemoFactory());
+	BLE::BlitheDemosApp app;
+    app.AddDemoFactory(new BLE::TriangleDemoFactory());
+    app.AddDemoFactory(new BLE::CubeDemoFactory());
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -154,9 +154,7 @@ int main(int, char**)
 		ImGui::NewFrame();
 
         // ImGui windows
-        myApp.DrawUI();
-
-        //myApp.DrawUIForSelectedDemo();
+        app.DrawUI();
 
 		// Rendering
 		ImGui::Render();
@@ -172,9 +170,9 @@ int main(int, char**)
             // Recalculate the aspect ratio
             float aspectRatio = display_w / static_cast<float>(display_h);
 
-            IME::UIData uiData{ clear_color, aspectRatio };
+            BLE::UIData uiData{ clear_color, aspectRatio };
 
-            myApp.RenderSelectedDemo(uiData);
+            app.RenderSelectedDemo(uiData);
         }
 
         // Render ImGui over OpenGL stuff

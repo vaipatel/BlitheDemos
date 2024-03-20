@@ -1,5 +1,4 @@
-#ifndef IMPATH_H
-#define IMPATH_H
+#include "BlithePath.h"
 
 #include <iostream>
 #ifdef _WIN32
@@ -8,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-namespace IME
+namespace BLE
 {
 	/*!
 	 * \brief Gets the path to the executable.
@@ -30,5 +29,3 @@ namespace IME
 		return pathStr.substr(0, pathStr.find_last_of("\\/"));
 	}
 }
-
-#endif // IMPATH_H

@@ -3,7 +3,7 @@
 
 #include <array>
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Represents a vertex with position, color and texture coordinate information.

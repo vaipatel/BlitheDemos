@@ -1,7 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "ImAssert.h"
+#include "BlitheAssert.h"
 #include "TextureData.h"
 
 #include <string>
@@ -10,7 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-namespace IME
+namespace BLE
 {
     /*!
      * \brief Handles the creation, binding/unbinding, destruction of a GL texture.
