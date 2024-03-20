@@ -6,6 +6,7 @@
 namespace IME
 {
     class ShaderProgram;
+	class Texture;
     class TrisObject;
 
     class TriangleDemo : public ImDemoInterface
@@ -25,6 +26,7 @@ namespace IME
         void SetupTriangle();
 
         ShaderProgram* m_shader = nullptr;
+		Texture* m_texture = nullptr;
         TrisObject* m_tri = nullptr;
         float m_rotationSpeed = 0.5f;
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians

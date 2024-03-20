@@ -80,6 +80,10 @@ namespace IME
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
+		int activeUnitOffset = 0;
+		m_texture->Bind(activeUnitOffset);
+		m_shader->SetUniform1i("myTex", activeUnitOffset);
+		
         m_cube->Render();
 
         m_shader->Unbind();

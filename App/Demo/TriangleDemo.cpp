@@ -1,6 +1,7 @@
 #include "TriangleDemo.h"
 #include "ImPath.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
 #include "TrisObject.h"
 #include "UIData.h"
 
@@ -28,6 +29,7 @@ namespace IME
     TriangleDemo::~TriangleDemo()
     {
         delete m_shader;
+		delete m_texture;
         delete m_tri;
     }
 
@@ -38,6 +40,7 @@ namespace IME
     {
         std::string exePath = GetExecutablePath();
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
+		m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         SetupTriangle();
 
         m_lastFrameTime = glfwGetTime();
@@ -65,6 +68,10 @@ namespace IME
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
+		int activeUnitOffset = 0;
+		m_texture->Bind(activeUnitOffset);
+		m_shader->SetUniform1i("myTex", activeUnitOffset);
+
         m_tri->Render();
 
         m_shader->Unbind();
@@ -90,9 +97,9 @@ namespace IME
         std::vector<Tri> triVertices = {
             // positions            // colors                 // texCoords
             {
-                { { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+                { { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.5f, 1.0f } },
                 { { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-                { { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }
+                { { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }
             }
         };
         m_tri = new TrisObject(triVertices);
