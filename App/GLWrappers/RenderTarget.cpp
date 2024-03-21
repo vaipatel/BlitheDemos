@@ -22,7 +22,7 @@ namespace BLE
 
         // Is this how we do depth? Or we pass in a texture with some "depth" format? I don't know.
         // But if we do we'll probably have to have GL_NONE attachment in the draw buffers below
-		// This seems to work for the default viewport render target, but no idea how well it generalizes.
+		// This seems to work for the standard viewport render target, but no idea how well it generalizes.
         GLuint renderBuffer;
         glGenRenderbuffers(1, &renderBuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);

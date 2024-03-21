@@ -18,7 +18,7 @@ namespace BLE
         virtual void OnRender(const UIData& _uiData,
                               const UIData* _defaultViewPortUIData = nullptr) = 0; //!< Called every frame to render the demo
         virtual void OnDrawUI() = 0;                      //!< Called every frame to render ImGui components
-        virtual bool UsesDefaultScene() const = 0;        //!< Whether this demo would like to render to default scene
+        virtual bool UsesStandardViewPort() const = 0;    //!< Whether this demo would like to render to the standardly provided viewport
     };
 
     /*!

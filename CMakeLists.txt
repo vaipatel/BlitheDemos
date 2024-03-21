@@ -113,6 +113,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/App/Utils/BlitheAssert.h
     ${PROJECT_SOURCE_DIR}/App/Utils/BlithePath.h
+    ${PROJECT_SOURCE_DIR}/App/Utils/BlitheShared.h
     ${PROJECT_SOURCE_DIR}/App/Utils/BlitheStrUtils.h
 )
 

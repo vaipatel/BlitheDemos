@@ -13,9 +13,9 @@ namespace BLE
     class RenderTarget;
     class UIData;
 
-    /*!
-     * \brief Hosts the demos.
-     */
+    ///
+    /// \brief Hosts the demos.
+    ///
     class BlitheDemosApp
     {
     public:
@@ -35,13 +35,14 @@ namespace BLE
         void EndDockSpace();
         void DoExistingDemoStuff(ImVec4& _clearColor);
 
+        std::list<DemoFactory*> m_demoFactories;          //!< List of demo factories
+        DemoFactory* m_selectedDemoFactory = nullptr;     //!< Currently selected demo factory
+        DemoInterface* m_currentDemo = nullptr;           //!< Demo created by selected demo factory
+        RenderTarget* m_standardViewPortTarget = nullptr; //!< Standard Viewport Render Target
+
+        // ImGui demo flags
         bool m_showDemoWindow = true;
         bool m_showAnotherWindow = false;
-
-        std::list<DemoFactory*> m_demoFactories;
-        DemoFactory* m_selectedDemoFactory = nullptr;
-        DemoInterface* m_currentDemo = nullptr;
-        RenderTarget* m_target = nullptr;
     };
 }
 

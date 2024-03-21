@@ -14,16 +14,23 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "BlitheAssert.h"
+#include "BlitheShared.h"
 #include "RenderTarget.h"
 #include "Texture.h"
 #include "UIData.h"
 
 namespace BLE
 {
+    ///
+    /// \brief Default Constructor.
+    ///
     BlitheDemosApp::BlitheDemosApp()
     {
     }
 
+    ///
+    /// \brief Destructor. Deletes demo factories, current demo and standard viewport render target.
+    ///
     BlitheDemosApp::~BlitheDemosApp()
     {
         for (DemoFactory* fac : m_demoFactories)
@@ -33,9 +40,15 @@ namespace BLE
         m_demoFactories.clear();
 
         delete m_currentDemo;
-        delete m_target;
+        delete m_standardViewPortTarget;
     }
 
+    ///
+    /// \brief Adds the supplied _demoFactory to list of demo factories. The demo name then shows
+    ///        up in the demo selector UI.
+    ///
+    /// \param _demoFactory - Demo factory for creating a particular demo.
+    ///
     void BlitheDemosApp::AddDemoFactory(DemoFactory* _demoFactory)
     {
         ASSERT(_demoFactory, "Demo factory cannot be null");
@@ -47,11 +60,20 @@ namespace BLE
         m_demoFactories.push_back(_demoFactory);
     }
 
+    ///
+    /// \brief Draws all the UI elements for the app and any custom elements provided by the demo.
+    ///
+    /// If the demo had requested to use the standard viewport, this is also where the demo's
+    /// rendered contents, available in the standard viewport render target's texture are submitted
+    /// for drawing on the standard viewport using an ImGui::Image().
+    ///
     void BlitheDemosApp::DrawUI()
     {
+        // The entire app UI is a DockSpace. So begin the DockSpace.
         StartDockSpace();
 
-        //----
+        // ----
+        // Draw the pane to select demos.
         ImGui::Begin("Demo Selector");
 
         for (DemoFactory* demoFac : m_demoFactories)
@@ -65,81 +87,113 @@ namespace BLE
 
         ImGui::End();
 
+        // Draw to the standard viewport and also draw any custom UI provided by the demo.
         DrawUIForSelectedDemo();
-        //----
+        // ----
 
         EndDockSpace();
     }
 
+    ///
+    /// \brief Called by main to give any selected demo the chance to make OpenGL calls and render
+    ///        things.
+    ///
+    /// \param _uiData - Data about the main viewport that might be useful for rendering
+    ///
     void BlitheDemosApp::RenderSelectedDemo(const UIData& _uiData)
     {
         UIData* defaultViewPortUIData = nullptr;
+
         if (m_currentDemo)
         {
-            if (m_currentDemo->UsesDefaultScene())
+            // If the demo had requested to use the standard viewport, we first bind the standard
+            // viewport render target's framebuffer. This way all the demo's rendering will end up
+            // in the standard viewport render target texture. This texture can then submitted to
+            // an ImGui::Image() to display the rendered contents in the standard viewport.
+            if (m_currentDemo->UsesStandardViewPort())
             {
-                if (m_target)
+                if (m_standardViewPortTarget)
                 {
-                    m_target->Bind();
+                    m_standardViewPortTarget->Bind();
 
-                    int textureWidth = m_target->GetTargetTexture()->GetWidth();
-                    int textureHeight = m_target->GetTargetTexture()->GetHeight();
+                    int textureWidth = m_standardViewPortTarget->GetTargetTexture()->GetWidth();
+                    int textureHeight = m_standardViewPortTarget->GetTargetTexture()->GetHeight();
                     glViewport(0, 0, textureWidth, textureHeight);
 
-                    float aspect = static_cast<float>(textureWidth) / textureHeight;
-                    glm::vec4 clearColor = m_target->GetClearColor();
+                    float aspect = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
+                    glm::vec4 clearColor = m_standardViewPortTarget->GetClearColor();
                     ImVec4 clearCol(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
                     defaultViewPortUIData = new UIData{ clearCol, aspect };
                 }
             }
 
+            // Give demo a chance to do its rendering.
             m_currentDemo->OnRender(_uiData, defaultViewPortUIData);
 
-            if (m_currentDemo->UsesDefaultScene())
+            // Finally, if we had bound the standard viewport framebuffer at the demo's behest,
+            // unbind it now.
+            if (m_currentDemo->UsesStandardViewPort())
             {
-                if (m_target)
+                if (m_standardViewPortTarget)
                 {
-                    m_target->UnBind();
+                    m_standardViewPortTarget->UnBind();
                 }
             }
         }
-        delete defaultViewPortUIData;
+
+        DeleteAndNull(defaultViewPortUIData);
     }
 
+    ///
+    /// \brief Creates and initializes the demo created by _demoFactory. Deletes any existing demo
+    ///        first.
+    ///
+    /// \param _demoFactory - Factory for creating the demo
+    ///
     void BlitheDemosApp::SelectDemo(DemoFactory* _demoFactory)
     {
-        delete m_currentDemo;
+        DeleteAndNull(m_currentDemo);
 
         m_selectedDemoFactory = _demoFactory;
         m_currentDemo = m_selectedDemoFactory->CreateDemo(); // Set the current demo
         m_currentDemo->OnInit();
     }
 
+    ///
+    /// \brief Draws the current demo's rendered contents to the standard viewport, if the demo had
+    ///        requested that facility, and then gives the demo a chance to draw any custom UI it
+    ///        needs.
+    ///
     void BlitheDemosApp::DrawUIForSelectedDemo()
     {
         if (m_currentDemo)
         {
-            if (m_currentDemo->UsesDefaultScene())
+            // If a demo had requested that its rendered content be drawn to the standard viewport,
+            // this class would have made sure to bind the standard viewport render target's
+            // framebuffer before calling the demo's render code. This way all the demo rendering
+            // would have gone to the standard viewport's framebuffer. Having done that, all this
+            // function needs to do is the standard viewport render target's texture to an
+            // ImGui::Image().
+            if (m_currentDemo->UsesStandardViewPort())
             {
-                ImGui::Begin("Default Viewport");
+                ImGui::Begin("Standard Viewport");
 
-                // Resize the default viewport render target if needed
-                //ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+                // Resize the standard viewport render target if needed
                 ImVec2 viewportSize = ImGui::GetContentRegionAvail();
                 ResizeDefaultViewPortTargetIfNeeded(viewportSize);
 
-                if (m_target)
+                if (m_standardViewPortTarget)
                 {
-                    // Convert GLuint to ImTextureID for ImGui
-                    ImTextureID texID = reinterpret_cast<ImTextureID>(static_cast<intptr_t>(m_target->GetTargetTexture()->GetHandle()));
+                    // Convert GLuint to ImTextureID (a.k.a. void*) for ImGui
+                    ImTextureID texID = reinterpret_cast<ImTextureID>(static_cast<intptr_t>(m_standardViewPortTarget->GetTargetTexture()->GetHandle()));
 
                     // Display the texture in the ImGui window
-                    int textureWidth = m_target->GetTargetTexture()->GetWidth();
-                    int textureHeight = m_target->GetTargetTexture()->GetHeight();
-                    ImVec2 viewportSize = ImVec2(textureWidth, textureHeight);
-                    // We're passing an OpenGL texture that goes (0,0) bottom left to (1,1) top right,
-                    // into ImGui that wants (0,0) top left to (1,1) bottom right. So we tell ImGui
-                    // to go (0,1) our top left to (1,0) our bottom right.
+                    int textureWidth = m_standardViewPortTarget->GetTargetTexture()->GetWidth();
+                    int textureHeight = m_standardViewPortTarget->GetTargetTexture()->GetHeight();
+                    ImVec2 viewportSize(static_cast<float>(textureWidth), static_cast<float>(textureHeight));
+                    // We're passing an OpenGL texture that goes bottom left (0,0) to top right (1,1)
+                    // into ImGui that wants top left (0,0) to bottom right (1,1). So we tell ImGui
+                    // to go from our top left (0,1) to our bottom right (1,0).
                     ImVec2 uv0(0, 1);
                     ImVec2 uv1(1, 0);
                     ImGui::Image(texID, viewportSize, uv0, uv1);
@@ -148,28 +202,35 @@ namespace BLE
                 ImGui::End();
             }
 
+            // Draw the demo's custom UI.
             m_currentDemo->OnDrawUI();
         }
     }
 
+    ///
+    /// \brief Resizes the standard viewport render target texture if its dimensions do not match
+    ///        the given _viewPortSize. (Creates the render target to the _viewPortSize if it does
+    ///        not exist yet).
+    ///
+    /// \param _viewportSize - Viewport Size to use for resizing the render target texture
+    ///
     void BlitheDemosApp::ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize)
     {
-        if (m_target)
+        if (m_standardViewPortTarget)
         {
-            int textureWidth = m_target->GetTargetTexture()->GetWidth();
-            int textureHeight = m_target->GetTargetTexture()->GetHeight();
+            int textureWidth = m_standardViewPortTarget->GetTargetTexture()->GetWidth();
+            int textureHeight = m_standardViewPortTarget->GetTargetTexture()->GetHeight();
 
             // If the viewport is resized, update the texture and framebuffer
-            if (_viewportSize.x != textureWidth || _viewportSize.y != textureHeight)
+            if (static_cast<int>(_viewportSize.x) != textureWidth || static_cast<int>(_viewportSize.y) != textureHeight)
             {
-                // I'm just deleting the RenderTarget for now. Gross
-                delete m_target;
-                m_target = nullptr;
+                // I'm just deleting the RenderTarget for now. Gross.
+                DeleteAndNull(m_standardViewPortTarget);
             }
         }
 
         // If we deleted the target above, or didn't have one to begin with, create it
-        if (!m_target)
+        if (!m_standardViewPortTarget)
         {
             int textureWidth = static_cast<int>(_viewportSize.x);
             int textureHeight = static_cast<int>(_viewportSize.y);
@@ -177,10 +238,10 @@ namespace BLE
             // Call function to resize framebuffer and texture, but only if width and height are non zero
             if (textureWidth > 0 && textureHeight > 0)
             {
-                m_target = new RenderTarget(textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, TextureData::FilterParam::LINEAR);
-                m_target->SetDepthTestEnabled(true);
-                m_target->SetClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                m_target->SetClearColor({ 0.15, 0.15, 0.15, 1.0 });
+                m_standardViewPortTarget = new RenderTarget(textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, TextureData::FilterParam::LINEAR);
+                m_standardViewPortTarget->SetDepthTestEnabled(true);
+                m_standardViewPortTarget->SetClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                m_standardViewPortTarget->SetClearColor({ 0.15, 0.15, 0.15, 1.0 });
             }
         }
     }
