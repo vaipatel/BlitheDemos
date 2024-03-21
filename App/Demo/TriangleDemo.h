@@ -6,7 +6,7 @@
 namespace BLE
 {
     class ShaderProgram;
-	class Texture;
+    class Texture;
     class TrisObject;
 
     class TriangleDemo : public DemoInterface
@@ -20,13 +20,13 @@ namespace BLE
 
         void OnDrawUI() override;
 
-		bool UsesDefaultScene() const override { return true;  }
+        bool UsesDefaultScene() const override { return true; }
 
     private:
         void SetupTriangle();
 
         ShaderProgram* m_shader = nullptr;
-		Texture* m_texture = nullptr;
+        Texture* m_texture = nullptr;
         TrisObject* m_tri = nullptr;
         float m_rotationSpeed = 0.5f;
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians

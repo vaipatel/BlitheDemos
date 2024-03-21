@@ -10,7 +10,7 @@ struct ImVec4;
 
 namespace BLE
 {
-	class RenderTarget;
+    class RenderTarget;
     class UIData;
 
     /*!
@@ -28,11 +28,11 @@ namespace BLE
         void RenderSelectedDemo(const UIData& _uiData);
 
     private:
-		void SelectDemo(DemoFactory* _demoFactory);
-		void DrawUIForSelectedDemo();
-		void ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize);
-		void StartDockSpace();
-		void EndDockSpace();
+        void SelectDemo(DemoFactory* _demoFactory);
+        void DrawUIForSelectedDemo();
+        void ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize);
+        void StartDockSpace();
+        void EndDockSpace();
         void DoExistingDemoStuff(ImVec4& _clearColor);
 
         bool m_showDemoWindow = true;
@@ -41,7 +41,7 @@ namespace BLE
         std::list<DemoFactory*> m_demoFactories;
         DemoFactory* m_selectedDemoFactory = nullptr;
         DemoInterface* m_currentDemo = nullptr;
-		RenderTarget* m_target = nullptr;
+        RenderTarget* m_target = nullptr;
     };
 }
 

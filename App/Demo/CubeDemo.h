@@ -20,7 +20,7 @@ namespace BLE
 
         void OnDrawUI() override;
 
-		bool UsesDefaultScene() const override { return true; }
+        bool UsesDefaultScene() const override { return true; }
 
     private:
         void SetupCube();

@@ -53,7 +53,7 @@ namespace BLE
     void CubeDemo::OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData/* = nullptr*/)
     {
         glEnable(GL_DEPTH_TEST);
-		ImVec4 clearCol = _defaultViewPortUIData ? _defaultViewPortUIData->m_clearColor : _uiData.m_clearColor;
+        ImVec4 clearCol = _defaultViewPortUIData ? _defaultViewPortUIData->m_clearColor : _uiData.m_clearColor;
         glClearColor(clearCol.x * clearCol.w, clearCol.y * clearCol.w, clearCol.z * clearCol.w, clearCol.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -80,10 +80,10 @@ namespace BLE
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
-		int activeUnitOffset = 0;
-		m_texture->Bind(activeUnitOffset);
-		m_shader->SetUniform1i("myTex", activeUnitOffset);
-		
+        int activeUnitOffset = 0;
+        m_texture->Bind(activeUnitOffset);
+        m_shader->SetUniform1i("myTex", activeUnitOffset);
+
         m_cube->Render();
 
         m_shader->Unbind();

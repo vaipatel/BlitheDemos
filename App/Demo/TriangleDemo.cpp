@@ -29,7 +29,7 @@ namespace BLE
     TriangleDemo::~TriangleDemo()
     {
         delete m_shader;
-		delete m_texture;
+        delete m_texture;
         delete m_tri;
     }
 
@@ -40,7 +40,7 @@ namespace BLE
     {
         std::string exePath = GetExecutablePath();
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
-		m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
+        m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         SetupTriangle();
 
         m_lastFrameTime = glfwGetTime();
@@ -60,17 +60,17 @@ namespace BLE
         m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
-		float aspect = _defaultViewPortUIData ? _defaultViewPortUIData->m_aspect : _uiData.m_aspect;
-        glm::mat4 matrix = glm::perspective(pi/3.0f, aspect, 0.1f, 100.0f);
+        float aspect = _defaultViewPortUIData ? _defaultViewPortUIData->m_aspect : _uiData.m_aspect;
+        glm::mat4 matrix = glm::perspective(pi / 3.0f, aspect, 0.1f, 100.0f);
         matrix = glm::translate(matrix, { 0, 0, -2.0f });
         matrix = glm::rotate(matrix, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
 
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
-		int activeUnitOffset = 0;
-		m_texture->Bind(activeUnitOffset);
-		m_shader->SetUniform1i("myTex", activeUnitOffset);
+        int activeUnitOffset = 0;
+        m_texture->Bind(activeUnitOffset);
+        m_shader->SetUniform1i("myTex", activeUnitOffset);
 
         m_tri->Render();
 
@@ -95,11 +95,11 @@ namespace BLE
     void TriangleDemo::SetupTriangle()
     {
         std::vector<Tri> triVertices = {
-            // positions            // colors                 // texCoords
+            // positions               // colors                 // texCoords
             {
-                { { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.5f, 1.0f } },
-                { { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-                { { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }
+            { { 0.0f,  0.707f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.5f, 1.0f } },
+            { { -0.5f, -0.5f,   0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+            { { 0.5f, -0.5f,   0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }
             }
         };
         m_tri = new TrisObject(triVertices);

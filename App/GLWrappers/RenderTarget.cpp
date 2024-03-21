@@ -87,10 +87,10 @@ namespace BLE
         }
     }
 
-	void RenderTarget::UnBind()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
+    void RenderTarget::UnBind()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
     /*!
      * \brief Cleans up the framebuffer and target texture.
