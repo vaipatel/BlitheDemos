@@ -6,14 +6,16 @@ set (CMAKE_CXX_STANDARD 11)
 
 if(MSVC)
     # If I don't set the below to MD, I get LNK4217 warnings and LNK2019 errors with glfw3.lib
-	# likely because of MSVCRT library being MD.
+    # likely because of MSVCRT library being MD.
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
 # OpenGL
+# ------
 find_package(OpenGL REQUIRED)
 
 # GLFW
+# ----
 find_package(GLFW3 QUIET)
 
 if(NOT GLFW3_FOUND) # GLFW not found, use the fallback
@@ -54,10 +56,12 @@ endif()
 
 
 # Glad
+# ----
 set(GLAD_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/glad" CACHE PATH "User Path to GLAD")
 include_directories(${GLAD_DIR}/include)
 
 # ImGui
+# -----
 set(IMGUI_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/imgui" CACHE PATH "User Path to ImGui")
 file(GLOB IMGUI_SOURCES 
     ${IMGUI_DIR}/*.cpp
@@ -76,13 +80,16 @@ target_include_directories(imgui PUBLIC ${IMGUI_DIR})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR}/backends)
 
 # stb
+# ---
 set(STB_DIR "${PROJECT_SOURCE_DIR}/../BlitheDemosVendors/stb" CACHE PATH "User Path to stb")
 include_directories(${STB_DIR})
 
 # GLM
+# ---
 find_package(glm QUIET)
 
 # My sources and headers
+# ----------------------
 set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
@@ -118,25 +125,30 @@ set(BLITHE_DEMOS_HEADERS
 )
 
 # My shaders
+# ----------
 file(GLOB BLITHE_DEMOS_SHADERS 
     "${PROJECT_SOURCE_DIR}/App/Shaders/*.vert"
     "${PROJECT_SOURCE_DIR}/App/Shaders/*.frag"
 )
 
-# My shaders
+# My assets
+# ---------
 file(GLOB BLITHE_DEMOS_ASSETS 
     "${PROJECT_SOURCE_DIR}/Assets/*.jpg"
 )
 
 # Add main executable
+# -------------------
 add_executable(BlitheDemos ${BLITHE_DEMOS_SOURCES} ${BLITHE_DEMOS_HEADERS} ${GLAD_DIR}/src/glad.c)
 
 # Organize source files into groups
+# ---------------------------------
 source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Source Files" FILES ${BLITHE_DEMOS_SOURCES})
 source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Header Files" FILES ${BLITHE_DEMOS_HEADERS})
 source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Shaders" FILES ${BLITHE_DEMOS_SHADERS})
 
 # Include directories
+# -------------------
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Demo)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Geometry)
@@ -145,7 +157,8 @@ target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
 
-# Add shaders to the executable only for them to show up in IDEs
+# Add shaders to the executable so they show up in IDEs
+# -----------------------------------------------------
 target_sources(BlitheDemos PRIVATE ${BLITHE_DEMOS_SHADERS})
 
 if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up include directories
@@ -157,6 +170,7 @@ if(NOT glm_FOUND) # If GLM is not found, use the bundled version and set up incl
 endif()
 
 # Link against GLFW
+# -----------------
 target_link_libraries(BlitheDemos PRIVATE ${GLFW_LIBRARY} imgui)
 target_link_libraries(BlitheDemos PRIVATE OpenGL::GL)
 
@@ -168,8 +182,8 @@ if(NOT GLFW3_FOUND AND EXISTS "${GLFW_DLL}")
         $<TARGET_FILE_DIR:BlitheDemos>)
 endif()
 
-# Create a "Shaders" directory in the output directory (where the executable is)
-# and copy shader files there
+# Copy shaders over to a "Shaders" directory next to the app
+# ----------------------------------------------------------
 foreach(SHADER ${BLITHE_DEMOS_SHADERS})
     get_filename_component(SHADER_NAME ${SHADER} NAME)
     add_custom_command(TARGET BlitheDemos POST_BUILD
@@ -178,8 +192,8 @@ foreach(SHADER ${BLITHE_DEMOS_SHADERS})
                 $<TARGET_FILE_DIR:BlitheDemos>/Shaders/${SHADER_NAME})
 endforeach()
 
-# Create a "Assets" directory in the output directory (where the executable is)
-# and copy asset files there
+# Copy assets over to a "Assets" directory next to app
+# ----------------------------------------------------
 foreach(ASSET ${BLITHE_DEMOS_ASSETS})
     get_filename_component(ASSET_NAME ${ASSET} NAME)
     add_custom_command(TARGET BlitheDemos POST_BUILD

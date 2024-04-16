@@ -11,7 +11,7 @@ namespace BLE
      *
      * \param _mesh - The mesh geometry
      */
-    MeshObject::MeshObject(const Mesh & _mesh) :
+    MeshObject::MeshObject(const Mesh& _mesh) :
         m_vao(0),
         m_vbo(0),
         m_ebo(0),

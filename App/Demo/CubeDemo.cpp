@@ -133,31 +133,31 @@ namespace BLE
             { { 1.0f,  1.0f,  1.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
             { { -1.0f,  1.0f,  1.0f },{ 1.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
 
-                                                                                   // Back face
+            // Back face
             { { -1.0f, -1.0f, -1.0f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-left
             { { 1.0f, -1.0f, -1.0f },{ 0.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-right
             { { 1.0f,  1.0f, -1.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-right
             { { -1.0f,  1.0f, -1.0f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-left
 
-                                                                                   // Left face
+            // Left face
             { { -1.0f, -1.0f, -1.0f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
             { { -1.0f, -1.0f,  1.0f },{ 0.5f, 0.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
             { { -1.0f,  1.0f,  1.0f },{ 0.5f, 0.5f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
             { { -1.0f,  1.0f, -1.0f },{ 0.0f, 0.5f, 0.5f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
 
-                                                                                   // Right face
+            // Right face
             { { 1.0f, -1.0f,  1.0f },{ 0.5f, 0.5f, 0.5f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
             { { 1.0f, -1.0f, -1.0f },{ 1.0f, 0.5f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
             { { 1.0f,  1.0f, -1.0f },{ 0.0f, 1.0f, 0.5f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
             { { 1.0f,  1.0f,  1.0f },{ 0.5f, 0.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
 
-                                                                                  // Top face
+            // Top face
             { { -1.0f,  1.0f,  1.0f },{ 0.0f, 0.5f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
             { { 1.0f,  1.0f,  1.0f },{ 1.0f, 0.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
             { { 1.0f,  1.0f, -1.0f },{ 0.5f, 1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
             { { -1.0f,  1.0f, -1.0f },{ 1.0f, 0.5f, 0.5f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
 
-                                                                                   // Bottom face
+            // Bottom face
             { { -1.0f, -1.0f, -1.0f },{ 0.5f, 0.5f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
             { { 1.0f, -1.0f, -1.0f },{ 0.5f, 1.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
             { { 1.0f, -1.0f,  1.0f },{ 1.0f, 0.5f, 0.5f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
@@ -206,7 +206,7 @@ namespace BLE
      * 
      * \return A new CubeDemo
      */
-    DemoInterface * CubeDemoFactory::CreateDemo()
+    DemoInterface* CubeDemoFactory::CreateDemo()
     {
         return new CubeDemo();
     }
