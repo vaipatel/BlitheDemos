@@ -2,6 +2,7 @@
 #define VERTEX_H
 
 #include <array>
+#include <glm/glm.hpp>
 
 namespace blithe
 {
@@ -14,9 +15,9 @@ namespace blithe
         static constexpr size_t s_N_COLOR_COMPONENTS = 4; //!< Num of color components
         static constexpr size_t s_N_TEX_COMPONENTS = 2;   //!< Num of texture components
 
-        std::array<float, s_N_POS_COMPONENTS> m_pos;       //!< Position Coordinates
-        std::array<float, s_N_COLOR_COMPONENTS> m_color;   //!< Color
-        std::array<float, s_N_TEX_COMPONENTS> m_texCoords; //!< Texture Coordinates
+        glm::vec3 m_pos;       //!< Position Coordinates
+        glm::vec4 m_color;     //!< Color
+        glm::vec2 m_texCoords; //!< Texture Coordinates
 
         /*!
          * \brief Helper to get the number of components for each attribute. Each component is

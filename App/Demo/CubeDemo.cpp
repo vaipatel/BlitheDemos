@@ -1,5 +1,6 @@
 #include "CubeDemo.h"
 #include "BlithePath.h"
+#include "GeomHelpers.h"
 #include "MeshObject.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
@@ -80,9 +81,9 @@ namespace blithe
         m_shader->Bind();
         m_shader->SetUniformMat4f("matrix", matrix);
 
-        int activeUnitOffset = 0;
+        size_t activeUnitOffset = 0;
         m_texture->Bind(activeUnitOffset);
-        m_shader->SetUniform1i("myTex", activeUnitOffset);
+        m_shader->SetUniform1i("myTex", static_cast<int>(activeUnitOffset));
 
         m_cube->Render();
 
@@ -125,62 +126,21 @@ namespace blithe
      */
     void CubeDemo::SetupCube()
     {
-        // Define the vertices of the cube
-        std::vector<Vertex> vertices = {
-            // Front face
-            { { -1.0f, -1.0f,  1.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
-            { { 1.0f, -1.0f,  1.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
-            { { 1.0f,  1.0f,  1.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
-            { { -1.0f,  1.0f,  1.0f },{ 1.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
+        glm::vec3 sides(2,2,2);
 
-            // Back face
-            { { -1.0f, -1.0f, -1.0f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-left
-            { { 1.0f, -1.0f, -1.0f },{ 0.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-right
-            { { 1.0f,  1.0f, -1.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-right
-            { { -1.0f,  1.0f, -1.0f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-left
-
-            // Left face
-            { { -1.0f, -1.0f, -1.0f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
-            { { -1.0f, -1.0f,  1.0f },{ 0.5f, 0.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
-            { { -1.0f,  1.0f,  1.0f },{ 0.5f, 0.5f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
-            { { -1.0f,  1.0f, -1.0f },{ 0.0f, 0.5f, 0.5f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
-
-            // Right face
-            { { 1.0f, -1.0f,  1.0f },{ 0.5f, 0.5f, 0.5f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
-            { { 1.0f, -1.0f, -1.0f },{ 1.0f, 0.5f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
-            { { 1.0f,  1.0f, -1.0f },{ 0.0f, 1.0f, 0.5f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
-            { { 1.0f,  1.0f,  1.0f },{ 0.5f, 0.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
-
-            // Top face
-            { { -1.0f,  1.0f,  1.0f },{ 0.0f, 0.5f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
-            { { 1.0f,  1.0f,  1.0f },{ 1.0f, 0.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
-            { { 1.0f,  1.0f, -1.0f },{ 0.5f, 1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
-            { { -1.0f,  1.0f, -1.0f },{ 1.0f, 0.5f, 0.5f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
-
-            // Bottom face
-            { { -1.0f, -1.0f, -1.0f },{ 0.5f, 0.5f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // Bottom-left
-            { { 1.0f, -1.0f, -1.0f },{ 0.5f, 1.0f, 0.5f, 1.0f },{ 1.0f, 0.0f } }, // Bottom-right
-            { { 1.0f, -1.0f,  1.0f },{ 1.0f, 0.5f, 0.5f, 1.0f },{ 1.0f, 1.0f } }, // Top-right
-            { { -1.0f, -1.0f,  1.0f },{ 1.0f, 1.0f, 0.5f, 1.0f },{ 0.0f, 1.0f } }, // Top-left
+        std::vector<glm::vec4> colors = {
+            { 1.0f, 0.0f, 0.0f, 1.0f }, // red
+            { 0.0f, 1.0f, 0.0f, 1.0f }, // green
+            { 0.0f, 0.0f, 1.0f, 1.0f }, // blue
+            { 1.0f, 1.0f, 0.0f, 1.0f }, // yellow
+            { 1.0f, 0.0f, 1.0f, 1.0f }, // magenta
+            { 0.0f, 1.0f, 1.0f, 1.0f }, // cyan
+            { 1.0f, 0.5f, 0.0f, 1.0f }, // orange
+            { 0.5f, 0.0f, 0.5f, 1.0f }, // purple
         };
 
-        // Define the indices for the cube (two triangles per face)
-        std::vector<unsigned int> indices = {
-            // Front face
-            0, 1, 2, 0, 2, 3,
-            // Back face
-            4, 5, 6, 4, 6, 7,
-            // Left face
-            8, 9, 10, 8, 10, 11,
-            // Right face
-            12, 13, 14, 12, 14, 15,
-            // Top face
-            16, 17, 18, 16, 18, 19,
-            // Bottom face
-            20, 21, 22, 20, 22, 23
-        };
+        Mesh mesh = GeomHelpers::CreateCuboid(sides, colors);
 
-        Mesh mesh{ vertices, indices };
         m_cube = new MeshObject(mesh);
     }
 
