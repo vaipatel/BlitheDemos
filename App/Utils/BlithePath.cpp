@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Gets the path to the executable.

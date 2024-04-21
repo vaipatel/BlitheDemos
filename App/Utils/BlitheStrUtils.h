@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-namespace BLE
+namespace blithe
 {
     /*!
     * \brief Returns the string representing the input integer _i in hex.

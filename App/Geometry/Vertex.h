@@ -3,7 +3,7 @@
 
 #include <array>
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Represents a vertex with position, color and texture coordinate information.

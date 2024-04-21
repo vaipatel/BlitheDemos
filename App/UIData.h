@@ -3,7 +3,7 @@
 
 #include "imgui.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief UI data passed from main to demos

@@ -127,9 +127,9 @@ int main(int, char**)
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    BLE::BlitheDemosApp app;
-    app.AddDemoFactory(new BLE::TriangleDemoFactory());
-    app.AddDemoFactory(new BLE::CubeDemoFactory());
+    blithe::BlitheDemosApp app;
+    app.AddDemoFactory(new blithe::TriangleDemoFactory());
+    app.AddDemoFactory(new blithe::CubeDemoFactory());
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -170,7 +170,7 @@ int main(int, char**)
             // Recalculate the aspect ratio
             float aspectRatio = display_w / static_cast<float>(display_h);
 
-            BLE::UIData uiData{ clear_color, aspectRatio };
+            blithe::UIData uiData{ clear_color, aspectRatio };
 
             app.RenderSelectedDemo(uiData);
         }

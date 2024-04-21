@@ -1,7 +1,7 @@
 #ifndef BLITHESHARED_H
 #define BLITHESHARED_H
 
-namespace BLE
+namespace blithe
 {
     ///
     /// \brief Deletes \p _x and sets it to nullptr.

@@ -19,7 +19,7 @@
 #include "Texture.h"
 #include "UIData.h"
 
-namespace BLE
+namespace blithe
 {
     ///
     /// \brief Default Constructor.

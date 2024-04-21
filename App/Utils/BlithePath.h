@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace BLE
+namespace blithe
 {
     std::string GetExecutablePath();
 }

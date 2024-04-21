@@ -3,7 +3,7 @@
 
 #include <glad/glad.h>
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Data needed for constructing a texture

@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <numeric>
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Constructor that creates the VBO and VAO for the given _tris soup.

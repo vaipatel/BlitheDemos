@@ -3,7 +3,7 @@
 
 #include "DemoInterface.h"
 
-namespace BLE
+namespace blithe
 {
     class ShaderProgram;
     class Texture;

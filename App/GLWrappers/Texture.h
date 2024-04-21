@@ -10,7 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Handles the creation, binding/unbinding, destruction of a GL texture.
@@ -35,7 +35,7 @@ namespace BLE
             void* m_data;           //!< The texture data (can be null)
         };
 
-        Texture(int _width, int _height, GLenum _format, GLenum _type, TextureData::FilterParam _filterParam, const char *_data);
+        Texture(int _width, int _height, GLenum _format, GLenum _type, TextureData::FilterParam _filterParam, const char* _data);
         Texture(const std::string& _imageFileName, TextureData::FilterParam _filterParam);
         ~Texture();
 

@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-namespace BLE
+namespace blithe
 {
     class Texture;
 

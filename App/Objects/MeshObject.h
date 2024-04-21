@@ -3,7 +3,7 @@
 
 #include "Mesh.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Renderable triangle mesh.

@@ -3,7 +3,7 @@
 
 #include "Vertex.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * Represents a triangle composed of 3 vertices.

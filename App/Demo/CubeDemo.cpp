@@ -21,7 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Destructor

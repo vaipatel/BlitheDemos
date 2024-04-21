@@ -8,7 +8,7 @@ struct ImGuiIO;
 struct ImVec2;
 struct ImVec4;
 
-namespace BLE
+namespace blithe
 {
     class RenderTarget;
     class UIData;

@@ -2,7 +2,7 @@
 #include "BlitheAssert.h"
 #include "Texture.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Constructor that creates a texture and a framebuffer that targets it.

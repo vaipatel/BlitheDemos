@@ -4,7 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Constructs a texture with the given params and _data.
@@ -17,7 +17,7 @@ namespace BLE
      * \param _data         - Data for the texture. Could be nullptr, especially for FBO
      *                        applications.
      */
-    Texture::Texture(int _width, int _height, GLenum _format, GLenum _type, TextureData::FilterParam _filterParam, const char *_data)
+    Texture::Texture(int _width, int _height, GLenum _format, GLenum _type, TextureData::FilterParam _filterParam, const char* _data)
     {
         Construct(TextureData{ _width, _height, _format, _type, _filterParam, _data });
     }
@@ -252,7 +252,7 @@ namespace BLE
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_internalFormat));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << blithe::IntToHex(_internalFormat));
 
         return format;
     }
@@ -291,7 +291,7 @@ namespace BLE
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_format));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << blithe::IntToHex(_format));
 
         return numComponents;
     }
@@ -327,7 +327,7 @@ namespace BLE
             failed = true;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_type));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << blithe::IntToHex(_type));
 
         return componentSize;
     }
@@ -392,7 +392,7 @@ namespace BLE
             break;
         }
 
-        ASSERT(!failed, "Could not deduce Texture for internal format " << BLE::IntToHex(_format));
+        ASSERT(!failed, "Could not deduce Texture for internal format " << blithe::IntToHex(_format));
 
         return internalFormat;
     }

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "BlitheAssert.h"
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Constructor. Compiles the vertex shader at _vertexPath and fragment shader at

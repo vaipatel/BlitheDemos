@@ -4,7 +4,7 @@
 #include "Tri.h"
 #include <vector>
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Renderable triangle soup object.

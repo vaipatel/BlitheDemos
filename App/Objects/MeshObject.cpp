@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <numeric>
 
-namespace BLE
+namespace blithe
 {
     /*!
      * \brief Constructor. Creates the VAO, VBO and EBO for the _mesh.
