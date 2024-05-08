@@ -16,7 +16,7 @@ namespace blithe
 
         void OnInit() override;
 
-        void OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData = nullptr) override;
+        void OnRender(const UIData& _uiData) override;
 
         void OnDrawUI() override;
 

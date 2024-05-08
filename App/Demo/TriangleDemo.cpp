@@ -49,7 +49,7 @@ namespace blithe
     /*!
      * \brief Render the triangle
      */
-    void TriangleDemo::OnRender(const UIData& _uiData, const UIData* _defaultViewPortUIData/* = nullptr*/)
+    void TriangleDemo::OnRender(const UIData& _uiData)
     {
         const float pi = glm::pi<float>();
 
@@ -60,7 +60,7 @@ namespace blithe
         m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
-        float aspect = _defaultViewPortUIData ? _defaultViewPortUIData->m_aspect : _uiData.m_aspect;
+        float aspect = _uiData.m_aspect;
         glm::mat4 matrix = glm::perspective(pi / 3.0f, aspect, 0.1f, 100.0f);
         matrix = glm::translate(matrix, { 0, 0, -2.0f });
         matrix = glm::rotate(matrix, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));

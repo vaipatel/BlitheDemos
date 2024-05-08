@@ -43,6 +43,8 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+static blithe::UIData uiData;
+
 // Main code
 int main(int, char**)
 {
@@ -170,7 +172,8 @@ int main(int, char**)
             // Recalculate the aspect ratio
             float aspectRatio = display_w / static_cast<float>(display_h);
 
-            blithe::UIData uiData{ clear_color, aspectRatio };
+            uiData.m_clearColor = clear_color;
+            uiData.m_aspect = aspectRatio;
 
             app.RenderSelectedDemo(uiData);
         }

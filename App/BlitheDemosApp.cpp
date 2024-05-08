@@ -102,7 +102,7 @@ namespace blithe
     ///
     void BlitheDemosApp::RenderSelectedDemo(const UIData& _uiData)
     {
-        UIData* defaultViewPortUIData = nullptr;
+        UIData uiData = _uiData;
 
         if (m_currentDemo)
         {
@@ -123,12 +123,13 @@ namespace blithe
                     float aspect = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
                     glm::vec4 clearColor = m_standardViewPortTarget->GetClearColor();
                     ImVec4 clearCol(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-                    defaultViewPortUIData = new UIData{ clearCol, aspect };
+                    uiData.m_clearColor = clearCol;
+                    uiData.m_aspect = aspect;
                 }
             }
 
             // Give demo a chance to do its rendering.
-            m_currentDemo->OnRender(_uiData, defaultViewPortUIData);
+            m_currentDemo->OnRender(uiData);
 
             // Finally, if we had bound the standard viewport framebuffer at the demo's behest,
             // unbind it now.
@@ -140,8 +141,6 @@ namespace blithe
                 }
             }
         }
-
-        DeleteAndNull(defaultViewPortUIData);
     }
 
     ///
