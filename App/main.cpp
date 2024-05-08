@@ -43,6 +43,18 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+void ProcessInput(GLFWwindow *window);
+
+void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos);
+
+struct MouseCallbackData
+{
+    float m_lastX = 0.0f;
+    float m_lastY = 0.0f;
+    bool m_firstMouse = true;
+};
+static MouseCallbackData mouseCbkData;
+
 static blithe::UIData uiData;
 
 // Main code
@@ -81,6 +93,8 @@ int main(int, char**)
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+
+    glfwSetCursorPosCallback(window, MouseCallback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -143,12 +157,16 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window))
 #endif
     {
+        uiData.m_mouseMoved = false;
+
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+
+        ProcessInput(window);
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -196,4 +214,65 @@ int main(int, char**)
     glfwTerminate();
     
     return 0;
+}
+
+// (stolen/adapted from learnopengl)
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void ProcessInput(GLFWwindow *window)
+{
+    std::unordered_set<blithe::enPressedKey>& pressedKeys = uiData.m_pressedKeys;
+    pressedKeys.clear();
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        pressedKeys.insert(blithe::enPressedKey::KEY_ESCAPE);
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        pressedKeys.insert(blithe::enPressedKey::KEY_W);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        pressedKeys.insert(blithe::enPressedKey::KEY_S);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        pressedKeys.insert(blithe::enPressedKey::KEY_A);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        pressedKeys.insert(blithe::enPressedKey::KEY_D);
+    }
+}
+
+// (stolen/adapted from learnopengl)
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
+{
+    float xpos = static_cast<float>(_xpos);
+    float ypos = static_cast<float>(_ypos);
+
+    if ( mouseCbkData.m_firstMouse )
+    {
+        mouseCbkData.m_lastX = xpos;
+        mouseCbkData.m_lastY = ypos;
+        mouseCbkData.m_firstMouse = false;
+    }
+
+    float xoffset = xpos - mouseCbkData.m_lastX;
+    float yoffset = mouseCbkData.m_lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    mouseCbkData.m_lastX = xpos;
+    mouseCbkData.m_lastY = ypos;
+
+    // Populate uiData
+    uiData.m_mouseMoved = true;
+    uiData.m_xPos = xpos;
+    uiData.m_yPos = ypos;
+    uiData.m_xOffset = xoffset;
+    uiData.m_yOffset = yoffset;
 }
