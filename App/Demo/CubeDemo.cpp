@@ -5,6 +5,7 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "UIData.h"
+#include "YawPitchCameraDecorator.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -33,6 +34,7 @@ namespace blithe
         delete m_cube;
         delete m_shader;
         delete m_texture;
+        delete m_cameraDecorator;
     }
 
     /*!
@@ -43,6 +45,8 @@ namespace blithe
         std::string exePath = GetExecutablePath();
         m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
+        m_cameraDecorator = new YawPitchCameraDecorator();
+
         SetupCube();
 
         m_lastFrameTime = glfwGetTime();
@@ -64,6 +68,9 @@ namespace blithe
         float deltaTime = currentTime - m_lastFrameTime;
         m_lastFrameTime = currentTime;
 
+        ProcessKeys(_uiData, deltaTime);
+        ProcessMouseMove(_uiData, deltaTime);
+
         m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
@@ -73,7 +80,7 @@ namespace blithe
         glm::mat4 projection = glm::mat4(1.0f);
         model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.5f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.5f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
+        view = m_cameraDecorator->GetCamera().GetViewMatrix(); //glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
         float aspect = m_useCustomAspect ? m_customAspect : _uiData.m_aspect;
         projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
         glm::mat4 matrix = projection * view * model; // I just mat mult here as opposed to per vertex in the shader
@@ -142,6 +149,37 @@ namespace blithe
         Mesh mesh = GeomHelpers::CreateCuboid(sides, colors);
 
         m_cube = new MeshObject(mesh);
+    }
+
+    void CubeDemo::ProcessKeys(const UIData& _uiData, float _deltaTime)
+    {
+        if ( _uiData.m_pressedKeys.count(enPressedKey::KEY_W) > 0 )
+        {
+            m_cameraDecorator->ProcessKeyboard(enCameraMovement::FORWARD, _deltaTime);
+        }
+
+        if ( _uiData.m_pressedKeys.count(enPressedKey::KEY_S) > 0 )
+        {
+            m_cameraDecorator->ProcessKeyboard(enCameraMovement::BACKWARD, _deltaTime);
+        }
+
+        if ( _uiData.m_pressedKeys.count(enPressedKey::KEY_A) > 0 )
+        {
+            m_cameraDecorator->ProcessKeyboard(enCameraMovement::LEFT, _deltaTime);
+        }
+
+        if ( _uiData.m_pressedKeys.count(enPressedKey::KEY_D) > 0 )
+        {
+            m_cameraDecorator->ProcessKeyboard(enCameraMovement::RIGHT, _deltaTime);
+        }
+    }
+
+    void CubeDemo::ProcessMouseMove(const UIData& _uiData, float _deltaTime)
+    {
+        if ( _uiData.m_mouseMoved )
+        {
+            m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset, _deltaTime, true);
+        }
     }
 
     /*!

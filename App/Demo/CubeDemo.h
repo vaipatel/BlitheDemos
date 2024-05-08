@@ -8,6 +8,7 @@ namespace blithe
     class ShaderProgram;
     class MeshObject;
     class Texture;
+    class CameraDecorator;
 
     class CubeDemo : public DemoInterface
     {
@@ -24,10 +25,13 @@ namespace blithe
 
     private:
         void SetupCube();
+        void ProcessKeys(const UIData& _uiData, float _deltaTime);
+        void ProcessMouseMove(const UIData& _uiData, float _deltaTime);
 
         ShaderProgram* m_shader = nullptr;
         MeshObject* m_cube = nullptr;
         Texture* m_texture = nullptr;
+        CameraDecorator* m_cameraDecorator = nullptr;
         float m_rotationSpeed = 0.5f;   //!< Value from UI control for the Rotation Speed
         bool m_useCustomAspect = false; //!< Value from UI control for whether the custom aspect ratio is used
         float m_customAspect = 1.0f;    //!< Value from UI control for the custom aspect ratio
