@@ -17,8 +17,8 @@ namespace blithe
     {
     public:
         virtual void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) = 0;
-        virtual void ProcessMouseMove(float _xOffset, float _yOffset, float _deltaTime,
-                                      bool _constrainPitch = true) = 0;
+        virtual void ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged,
+                                      float _deltaTime, bool _constrainPitch = true) = 0;
         virtual ~CameraDecorator() {}
 
         const Camera& GetCamera() const { return m_camera; }

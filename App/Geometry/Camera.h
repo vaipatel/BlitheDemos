@@ -21,9 +21,12 @@ namespace blithe
 
         glm::vec3 GetFront() const { return m_front; }
         void SetFront(const glm::vec3& _front);
+        void SetFrontAndRight(const glm::vec3& _front, const glm::vec3& _right);
         void SetTarget(const glm::vec3& _target);
 
         glm::vec3 GetRight() const { return m_right; }
+        glm::vec3 GetUp() const { return m_up; }
+        glm::vec3 GetWorldUp() const { return m_worldUp; }
 
     private:
         void UpdateRightAndUp();

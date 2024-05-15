@@ -95,6 +95,7 @@ set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
+    ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/Camera.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/YawPitchCameraDecorator.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/GeomHelpers.cpp
@@ -112,6 +113,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Demo/DemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Camera.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/CameraDecorator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/YawPitchCameraDecorator.h

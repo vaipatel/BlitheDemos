@@ -4,6 +4,7 @@ namespace blithe
 {
     YawPitchCameraDecorator::YawPitchCameraDecorator()
     {
+        m_camera = Camera({0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f});
         m_yawDeg = 0.0f;
         m_pitchDeg = 0.0f;
     }
@@ -33,8 +34,9 @@ namespace blithe
         }
     }
 
-    void YawPitchCameraDecorator::ProcessMouseMove(float _xOffset, float _yOffset, float _deltaTime,
-                                               bool _constrainPitch/*=true*/)
+    void YawPitchCameraDecorator::ProcessMouseMove(float _xOffset, float _yOffset,
+                                                   bool _leftDragged, float _deltaTime,
+                                                   bool _constrainPitch/*=true*/)
     {
         _CRT_UNUSED(_deltaTime);
 

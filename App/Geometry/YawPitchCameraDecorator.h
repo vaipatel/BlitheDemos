@@ -12,7 +12,7 @@ namespace blithe
         ~YawPitchCameraDecorator() override;
 
         void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) override;
-        void ProcessMouseMove(float _xOffset, float _yOffset, float _deltaTime,
+        void ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged, float _deltaTime,
                               bool _constrainPitch = true) override;
 
         float m_yawDeg;

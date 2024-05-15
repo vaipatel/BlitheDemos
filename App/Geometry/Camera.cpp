@@ -37,6 +37,14 @@ namespace blithe
         UpdateRightAndUp();
     }
 
+    void Camera::SetFrontAndRight(const glm::vec3& _front, const glm::vec3& _right)
+    {
+        glm::vec3 newUp = glm::normalize(glm::cross(_right, _front));
+        m_front = _front;
+        m_up = newUp;
+        m_right = glm::normalize(glm::cross(m_front, m_up));
+    }
+
     void Camera::SetTarget(const glm::vec3& _target)
     {
         SetFront(_target - m_position);

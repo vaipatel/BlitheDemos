@@ -1,4 +1,5 @@
 #include "CubeDemo.h"
+#include "ArcBallCameraDecorator.h"
 #include "BlithePath.h"
 #include "GeomHelpers.h"
 #include "MeshObject.h"
@@ -45,7 +46,7 @@ namespace blithe
         std::string exePath = GetExecutablePath();
         m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
-        m_cameraDecorator = new YawPitchCameraDecorator();
+        m_cameraDecorator = new ArcBallCameraDecorator();
 
         SetupCube();
 
@@ -178,7 +179,8 @@ namespace blithe
     {
         if ( _uiData.m_mouseMoved )
         {
-            m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset, _deltaTime, true);
+            m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
+                                                _uiData.m_leftDragged, _deltaTime, true);
         }
     }
 
