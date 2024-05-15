@@ -52,6 +52,9 @@ struct MouseCallbackData
     float m_lastX = 0.0f;
     float m_lastY = 0.0f;
     bool m_firstMouse = true;
+    bool m_pressed = false;
+    bool m_released = false;
+    bool m_dragged = false;
 };
 static MouseCallbackData mouseCbkData;
 
@@ -263,6 +266,26 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
         mouseCbkData.m_firstMouse = false;
     }
 
+    if ( mouseCbkData.m_pressed )
+    {
+        mouseCbkData.m_dragged = true;
+    }
+    else
+    {
+        mouseCbkData.m_dragged = false;
+    }
+
+    if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    {
+        mouseCbkData.m_released = true;
+        mouseCbkData.m_pressed = false;
+    }
+    else if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        mouseCbkData.m_pressed = true;
+        mouseCbkData.m_released = false;
+    }
+
     float xoffset = xpos - mouseCbkData.m_lastX;
     float yoffset = mouseCbkData.m_lastY - ypos; // reversed since y-coordinates go from bottom to top
 
@@ -271,6 +294,7 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
 
     // Populate uiData
     uiData.m_mouseMoved = true;
+    uiData.m_leftDragged = mouseCbkData.m_dragged;
     uiData.m_xPos = xpos;
     uiData.m_yPos = ypos;
     uiData.m_xOffset = xoffset;

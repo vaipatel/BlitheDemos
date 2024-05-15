@@ -26,6 +26,7 @@ namespace blithe
         std::unordered_set<enPressedKey> m_pressedKeys; //!< The pressed keys, per glfw
 
         bool m_mouseMoved;
+        bool m_leftDragged;
         float m_xPos;
         float m_yPos;
         float m_xOffset;
