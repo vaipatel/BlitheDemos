@@ -177,7 +177,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         // ImGui windows
-        app.DrawUI();
+        app.DrawUI(uiData);
 
         // Rendering
         ImGui::Render();
@@ -256,6 +256,9 @@ void ProcessInput(GLFWwindow *window)
 // -------------------------------------------------------
 void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddMousePosEvent(_xpos, _ypos);
+
     float xpos = static_cast<float>(_xpos);
     float ypos = static_cast<float>(_ypos);
 
@@ -293,6 +296,7 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
     mouseCbkData.m_lastY = ypos;
 
     // Populate uiData
+    uiData.m_guiCaptured = io.WantCaptureMouse;
     uiData.m_mouseMoved = true;
     uiData.m_leftDragged = mouseCbkData.m_dragged;
     uiData.m_xPos = xpos;

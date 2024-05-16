@@ -67,7 +67,7 @@ namespace blithe
     /// rendered contents, available in the standard viewport render target's texture are submitted
     /// for drawing on the standard viewport using an ImGui::Image().
     ///
-    void BlitheDemosApp::DrawUI()
+    void BlitheDemosApp::DrawUI(UIData& _uiData)
     {
         // The entire app UI is a DockSpace. So begin the DockSpace.
         StartDockSpace();
@@ -88,7 +88,7 @@ namespace blithe
         ImGui::End();
 
         // Draw to the standard viewport and also draw any custom UI provided by the demo.
-        DrawUIForSelectedDemo();
+        DrawUIForSelectedDemo(_uiData);
         // ----
 
         EndDockSpace();
@@ -163,7 +163,7 @@ namespace blithe
     ///        requested that facility, and then gives the demo a chance to draw any custom UI it
     ///        needs.
     ///
-    void BlitheDemosApp::DrawUIForSelectedDemo()
+    void BlitheDemosApp::DrawUIForSelectedDemo(UIData& _uiData)
     {
         if (m_currentDemo)
         {
@@ -196,6 +196,13 @@ namespace blithe
                     ImVec2 uv0(0, 1);
                     ImVec2 uv1(1, 0);
                     ImGui::Image(texID, viewportSize, uv0, uv1);
+
+                    // TODO: Read more of https://github.com/ocornut/imgui/issues/4234
+                    // and possibly https://github.com/ocornut/imgui/issues/5708
+                    bool isHovered = ImGui::IsItemHovered();
+                    bool isFocused = ImGui::IsItemFocused();
+                    _uiData.m_guiCaptured = !(isHovered || isFocused);
+                    //std::cout << isHovered << " " << isFocused << std::endl;
                 }
 
                 ImGui::End();

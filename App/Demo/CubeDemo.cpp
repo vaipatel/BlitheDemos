@@ -177,7 +177,7 @@ namespace blithe
 
     void CubeDemo::ProcessMouseMove(const UIData& _uiData, float _deltaTime)
     {
-        if ( _uiData.m_mouseMoved )
+        if ( _uiData.m_mouseMoved && !_uiData.m_guiCaptured )
         {
             m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
                                                 _uiData.m_leftDragged, _deltaTime, true);

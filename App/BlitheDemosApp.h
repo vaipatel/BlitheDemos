@@ -24,12 +24,12 @@ namespace blithe
 
         void AddDemoFactory(DemoFactory* _demoFactory);
 
-        void DrawUI();
+        void DrawUI(UIData& _uiData);
         void RenderSelectedDemo(const UIData& _uiData);
 
     private:
         void SelectDemo(DemoFactory* _demoFactory);
-        void DrawUIForSelectedDemo();
+        void DrawUIForSelectedDemo(UIData& _uiData);
         void ResizeDefaultViewPortTargetIfNeeded(const ImVec2& _viewportSize);
         void StartDockSpace();
         void EndDockSpace();
