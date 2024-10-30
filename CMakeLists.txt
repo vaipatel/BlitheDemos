@@ -38,7 +38,7 @@ if(NOT GLFW3_FOUND) # GLFW not found, use the fallback
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2015")
     elseif(MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2017")
-    elseif(MSVC_VERSION EQUAL 1920)
+    elseif(MSVC_VERSION GREATER_EQUAL 1920 AND MSVC_VERSION LESS_EQUAL 1929)
         set(GLFW_LIB_PATH "${GLFW3_FALLBACK_DIR}/lib-vc2019")
     else()
         message(FATAL_ERROR "Unsupported MSVC version for GLFW fallback.")
