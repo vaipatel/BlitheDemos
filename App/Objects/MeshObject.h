@@ -17,16 +17,20 @@ namespace blithe
         explicit MeshObject(const Mesh& _mesh);
         ~MeshObject();
 
+        void SetInstances(const std::vector<glm::mat4>& _transforms);
+
         void Render();
 
     private:
         void SetupMesh();
         void CleanUp();
 
-        unsigned int m_vao; //!< ID of Vertex Array Object holding the vertex layout
-        unsigned int m_vbo; //!< ID of Vertex Buffer Object holding the vertex data
-        unsigned int m_ebo; //!< ID of Element Buffer Object holding the mesh layout
-        Mesh m_mesh;        //!< The mesh geometry
+        unsigned int m_vao;    //!< ID of Vertex Array Object holding the vertex layout
+        unsigned int m_vbo;    //!< ID of Vertex Buffer Object holding the vertex data
+        unsigned int m_ebo;    //!< ID of Element Buffer Object holding the mesh layout
+        unsigned int m_ibo;    //!< ID of Vertex Buffer Object holding any instances data
+        size_t m_numInstances; //!< Number of instances, equal to the number of transforms given for instancing
+        Mesh m_mesh;           //!< The mesh geometry
     };
 }
 
