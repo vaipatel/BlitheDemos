@@ -129,7 +129,10 @@ namespace blithe
             }
 
             // Give demo a chance to do its rendering.
-            m_currentDemo->OnRender(uiData);
+            double currentTimeS = glfwGetTime(); // Get elapsed time since GLFW started
+            double deltaTimeS = currentTimeS - m_lastFrameTimeS;
+            m_lastFrameTimeS = currentTimeS;
+            m_currentDemo->OnRender(deltaTimeS, uiData);
 
             // Finally, if we had bound the standard viewport framebuffer at the demo's behest,
             // unbind it now.
@@ -156,6 +159,8 @@ namespace blithe
         m_selectedDemoFactory = _demoFactory;
         m_currentDemo = m_selectedDemoFactory->CreateDemo(); // Set the current demo
         m_currentDemo->OnInit();
+
+        m_lastFrameTimeS = glfwGetTime();
     }
 
     ///

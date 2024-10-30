@@ -43,6 +43,7 @@ namespace blithe
         // ImGui demo flags
         bool m_showDemoWindow = true;
         bool m_showAnotherWindow = false;
+        double m_lastFrameTimeS = 0.0;    // Time at the last frame
     };
 }
 

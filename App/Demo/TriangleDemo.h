@@ -16,7 +16,7 @@ namespace blithe
 
         void OnInit() override;
 
-        void OnRender(const UIData& _uiData) override;
+        void OnRender(double _deltaTimeS, const UIData& _uiData) override;
 
         void OnDrawUI() override;
 
@@ -30,8 +30,6 @@ namespace blithe
         TrisObject* m_tri = nullptr;
         float m_rotationSpeed = 0.5f;
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
-        float m_lastFrameTime = 0.0f; // Time at the last frame
-
     };
 
     class TriangleDemoFactory : public DemoFactory

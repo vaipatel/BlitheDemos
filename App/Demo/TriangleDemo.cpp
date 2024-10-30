@@ -42,22 +42,17 @@ namespace blithe
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
         m_texture = new Texture(exePath + "/Assets/vintage_convertible.jpg", TextureData::FilterParam::LINEAR);
         SetupTriangle();
-
-        m_lastFrameTime = glfwGetTime();
     }
 
     /*!
      * \brief Render the triangle
      */
-    void TriangleDemo::OnRender(const UIData& _uiData)
+    void TriangleDemo::OnRender(double _deltaTimeS, const UIData& _uiData)
     {
+        float deltaTimeS = static_cast<float>(_deltaTimeS);
         const float pi = glm::pi<float>();
 
-        float currentTime = glfwGetTime(); // Get elapsed time since GLFW started
-        float deltaTime = currentTime - m_lastFrameTime;
-        m_lastFrameTime = currentTime;
-
-        m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
+        m_rotationAngleRad += deltaTimeS * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
         float aspect = _uiData.m_aspect;
@@ -69,7 +64,7 @@ namespace blithe
         m_shader->SetUniformMat4f("matrix", matrix);
 
         int activeUnitOffset = 0;
-        m_texture->Bind(activeUnitOffset);
+        m_texture->Bind(static_cast<size_t>(activeUnitOffset));
         m_shader->SetUniform1i("myTex", activeUnitOffset);
 
         m_tri->Render();

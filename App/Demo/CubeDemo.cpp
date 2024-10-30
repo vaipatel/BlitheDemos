@@ -6,17 +6,9 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "UIData.h"
-#include "YawPitchCameraDecorator.h"
 
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include <stdio.h>
-
-#define GL_SILENCE_DEPRECATION
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-#include <GLES2/gl2.h>
-#endif
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -49,15 +41,15 @@ namespace blithe
         m_cameraDecorator = new ArcBallCameraDecorator();
 
         SetupCube();
-
-        m_lastFrameTime = glfwGetTime();
     }
 
     /*!
      * \brief Render the cube
      */
-    void CubeDemo::OnRender(const UIData& _uiData)
+    void CubeDemo::OnRender(double _deltaTimeS, const UIData& _uiData)
     {
+        float deltaTimeS = static_cast<float>(_deltaTimeS);
+
         glEnable(GL_DEPTH_TEST);
         ImVec4 clearCol = _uiData.m_clearColor;
         glClearColor(clearCol.x * clearCol.w, clearCol.y * clearCol.w, clearCol.z * clearCol.w, clearCol.w);
@@ -65,14 +57,10 @@ namespace blithe
 
         const float pi = glm::pi<float>();
 
-        float currentTime = glfwGetTime(); // Get elapsed time since GLFW started
-        float deltaTime = currentTime - m_lastFrameTime;
-        m_lastFrameTime = currentTime;
+        ProcessKeys(_uiData, deltaTimeS);
+        ProcessMouseMove(_uiData, deltaTimeS);
 
-        ProcessKeys(_uiData, deltaTime);
-        ProcessMouseMove(_uiData, deltaTime);
-
-        m_rotationAngleRad += deltaTime * m_rotationSpeed * 2.0f * pi; // Update based on speed
+        m_rotationAngleRad += deltaTimeS * m_rotationSpeed * 2.0f * pi; // Update based on speed
         m_rotationAngleRad = fmod(m_rotationAngleRad, 2.0f * pi); // Keep progress within a full rotation range
 
         // create transformations (inspired from learnopengl.com)

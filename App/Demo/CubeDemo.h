@@ -17,7 +17,7 @@ namespace blithe
 
         void OnInit() override;
 
-        void OnRender(const UIData& _uiData) override;
+        void OnRender(double _deltaTimeS, const UIData& _uiData) override;
 
         void OnDrawUI() override;
 
@@ -37,8 +37,6 @@ namespace blithe
         float m_customAspect = 1.0f;    //!< Value from UI control for the custom aspect ratio
 
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
-        float m_lastFrameTime = 0.0f;    // Time at the last frame
-
     };
 
     class CubeDemoFactory : public DemoFactory
