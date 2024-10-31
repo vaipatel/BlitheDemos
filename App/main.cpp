@@ -22,6 +22,7 @@
 #include "TriangleDemo.h"
 #include "CubeDemo.h"
 #include "InstancedCubeDemo.h"
+#include "GrassDemo.h"
 #include "UIData.h"
 
 #include <iostream>
@@ -151,6 +152,7 @@ int main(int, char**)
     app.AddDemoFactory(new blithe::TriangleDemoFactory());
     app.AddDemoFactory(new blithe::CubeDemoFactory());
     app.AddDemoFactory(new blithe::InstancedCubeDemoFactory());
+    app.AddDemoFactory(new blithe::GrassDemoFactory());
 
 	// Main loop
 #ifdef __EMSCRIPTEN__

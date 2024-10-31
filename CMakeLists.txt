@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.22)
 
 project(BlitheDemos)
 
@@ -88,12 +88,23 @@ include_directories(${STB_DIR})
 # ---
 find_package(glm QUIET)
 
+# Assimp
+# ------
+set(ASSIMP_DIR ${PROJECT_SOURCE_DIR}/Extern/assimp)
+
+# Add Assimp as a subdirectory to build it as part of the project
+set(ASSIMP_BUILD_TESTS OFF)          # Disable building Assimp tests
+set(ASSIMP_NO_EXPORT ON)             # Disable export functionality if not needed
+add_subdirectory(${ASSIMP_DIR})
+
+
 # My sources and headers
 # ----------------------
 set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
+    ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.cpp
@@ -113,6 +124,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/UIData.h
     ${PROJECT_SOURCE_DIR}/App/Demo/DemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
+    ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.h
@@ -144,8 +156,12 @@ file(GLOB BLITHE_DEMOS_SHADERS
 
 # My assets
 # ---------
+set(ASSET_PARENT_PATH ${PROJECT_SOURCE_DIR}/Assets)
 file(GLOB BLITHE_DEMOS_ASSETS 
-    "${PROJECT_SOURCE_DIR}/Assets/*.jpg"
+    "${ASSET_PARENT_PATH}/*.jpg"
+    "${ASSET_PARENT_PATH}/grass yellowing/*.bak"
+    "${ASSET_PARENT_PATH}/grass yellowing/*.mtl"
+    "${ASSET_PARENT_PATH}/grass yellowing/*.obj"
 )
 
 # Add main executable
@@ -167,6 +183,7 @@ target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrapp
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
+target_include_directories(BlitheDemos PRIVATE ${ASSIMP_DIR}/include)
 
 # Add shaders to the executable so they show up in IDEs
 # -----------------------------------------------------
@@ -193,6 +210,10 @@ if(NOT GLFW3_FOUND AND EXISTS "${GLFW_DLL}")
         $<TARGET_FILE_DIR:BlitheDemos>)
 endif()
 
+# Link against Assimp
+# -------------------
+target_link_libraries(BlitheDemos PRIVATE assimp)
+
 # Copy shaders over to a "Shaders" directory next to the app
 # ----------------------------------------------------------
 foreach(SHADER ${BLITHE_DEMOS_SHADERS})
@@ -207,8 +228,17 @@ endforeach()
 # ----------------------------------------------------
 foreach(ASSET ${BLITHE_DEMOS_ASSETS})
     get_filename_component(ASSET_NAME ${ASSET} NAME)
+
+    # Get the component of the path upto but not including the ASSET_NAME, call it ASSET_PATH
+    cmake_path(GET ASSET PARENT_PATH ASSET_PATH)
+    #message(STATUS "Asset Root dir = ${ASSET_PATH}")
+
+    # Get ASSET_PATH relative to ASSET_PARENT_PATH, call it ASSET_REL_PATH
+    cmake_path(RELATIVE_PATH ASSET_PATH BASE_DIRECTORY ${ASSET_PARENT_PATH} OUTPUT_VARIABLE ASSET_REL_PATH)
+    #message(STATUS "Asset Rel  = ${ASSET_REL_PATH}")
+
     add_custom_command(TARGET BlitheDemos POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ASSET}
-                $<TARGET_FILE_DIR:BlitheDemos>/Assets/${ASSET_NAME})
+                $<TARGET_FILE_DIR:BlitheDemos>/Assets/${ASSET_REL_PATH}/${ASSET_NAME})
 endforeach()
