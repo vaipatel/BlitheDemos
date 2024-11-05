@@ -8,7 +8,7 @@ namespace blithe
     class ArcBallCameraDecorator : public CameraDecorator
     {
     public:
-        ArcBallCameraDecorator();
+        ArcBallCameraDecorator(const glm::vec3 _eye = {0.0f, 0.0f, 5.0f});
         ~ArcBallCameraDecorator() override;
 
         void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) override;

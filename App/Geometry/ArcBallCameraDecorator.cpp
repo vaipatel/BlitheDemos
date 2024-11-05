@@ -1,14 +1,14 @@
 #include "ArcBallCameraDecorator.h"
 #include <glm/gtx/quaternion.hpp>
-#include <iostream>
+//#include <iostream>
 
 namespace blithe
 {
-    ArcBallCameraDecorator::ArcBallCameraDecorator()
+    ArcBallCameraDecorator::ArcBallCameraDecorator(const glm::vec3 _eye/*= {0.0f, 0.0f, 5.0f}*/)
     {
         m_target = {0, 0, 0};
-        m_distance = 5.0f;
-        m_camera = Camera::FromTarget({0.0f, 0.0f, m_distance}, m_target, {0.0f, 1.0f, 0.0f});
+        m_distance = _eye.z;
+        m_camera = Camera::FromTarget(_eye, m_target, {0.0f, 1.0f, 0.0f});
         m_sensitivity = 1.0f;
     }
 
