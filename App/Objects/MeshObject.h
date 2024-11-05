@@ -21,6 +21,8 @@ namespace blithe
 
         void Render();
 
+        const Mesh& GetMesh() const { return m_mesh; }
+
     private:
         void SetupMesh();
         void CleanUp();
