@@ -95,6 +95,8 @@ set(ASSIMP_DIR ${PROJECT_SOURCE_DIR}/Extern/assimp)
 # Add Assimp as a subdirectory to build it as part of the project
 set(ASSIMP_BUILD_TESTS OFF)          # Disable building Assimp tests
 set(ASSIMP_NO_EXPORT ON)             # Disable export functionality if not needed
+set(ASSIMP_WARNINGS_AS_ERRORS OFF)
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(${ASSIMP_DIR})
 
 
@@ -106,11 +108,14 @@ set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.cpp
+    ${PROJECT_SOURCE_DIR}/App/Demo/SimpleBSPDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/Camera.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/YawPitchCameraDecorator.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/GeomHelpers.cpp
+    ${PROJECT_SOURCE_DIR}/App/Geometry/MeshView.cpp
+    ${PROJECT_SOURCE_DIR}/App/Geometry/TriBSPTree.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
@@ -126,6 +131,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.h
+    ${PROJECT_SOURCE_DIR}/App/Demo/SimpleBSPDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Camera.h
@@ -133,7 +139,10 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Geometry/YawPitchCameraDecorator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/GeomHelpers.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/MeshIterator.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/MeshView.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/TriBSPTree.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Vertex.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
