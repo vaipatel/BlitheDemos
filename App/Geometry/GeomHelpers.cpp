@@ -40,7 +40,8 @@ namespace blithe
     ///
     /// \return Mesh for the cuboid
     ///
-    Mesh GeomHelpers::CreateCuboid(glm::vec3 _sides, const std::vector<glm::vec4>& _colors)
+    Mesh GeomHelpers::CreateCuboid(glm::vec3 _sides, const std::vector<glm::vec4>& _colors,
+                                   const glm::mat4& _modelTransform/*=glm::mat4(1.0f)*/)
     {
         auto w = _sides.x, h = _sides.y, d =_sides.z;
 
@@ -84,9 +85,11 @@ namespace blithe
         };
 
         // Scale the vertex positions so we have the desired sides
+        // Transform the vertex positions with the optional modelTransform (defaults to identity)
         for ( size_t i = 0; i < vertices.size(); i++)
         {
             vertices[i].m_pos *= glm::vec3{w/2, h/2, d/2};
+            vertices[i].m_pos = _modelTransform * glm::vec4(vertices[i].m_pos, 1.0f);
         }
 
         // Define the indices for the cube (two triangles per face)

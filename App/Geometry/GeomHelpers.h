@@ -12,7 +12,8 @@ namespace blithe
     {
     public:
         static glm::vec3 CalcCentroid(const Mesh& _mesh);
-        static Mesh CreateCuboid(glm::vec3 _sides, const std::vector<glm::vec4>& _colors);
+        static Mesh CreateCuboid(glm::vec3 _sides, const std::vector<glm::vec4>& _colors,
+                                 const glm::mat4& _modelTransform = glm::mat4(1.0f));
     };
 }
 
