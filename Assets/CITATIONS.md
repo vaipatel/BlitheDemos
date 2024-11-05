@@ -5,3 +5,7 @@ Highsmith, Carol M, photographer. This front-seat-only Nash Metropolitan Convert
 ### grass yellowing by Steve B
 
 grass yellowing by Steve B [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/eFUpFgjCf0p)
+
+### teapot.ply $
+
+The famous Utah teapot. PLY Model downloaded from https://github.com/gnomeby/canvas3D/blob/master/teapot.ply.

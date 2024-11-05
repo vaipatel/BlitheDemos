@@ -168,6 +168,9 @@ file(GLOB BLITHE_DEMOS_SHADERS
 set(ASSET_PARENT_PATH ${PROJECT_SOURCE_DIR}/Assets)
 file(GLOB BLITHE_DEMOS_ASSETS 
     "${ASSET_PARENT_PATH}/*.jpg"
+    "${ASSET_PARENT_PATH}/*.obj"
+    "${ASSET_PARENT_PATH}/*.stl"
+    "${ASSET_PARENT_PATH}/*.ply"
     "${ASSET_PARENT_PATH}/grass yellowing/*.bak"
     "${ASSET_PARENT_PATH}/grass yellowing/*.mtl"
     "${ASSET_PARENT_PATH}/grass yellowing/*.obj"
