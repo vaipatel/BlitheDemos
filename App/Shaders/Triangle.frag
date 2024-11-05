@@ -4,8 +4,17 @@ in vec4 col;
 in vec2 TexCoords;
 out vec4 FragColor1; // Pointed to by GL_COLOR_ATTACHMENT0 + 0. Will write to texture at m_handles[0] in texture unit GL_TEXTURE0 + 0.
 uniform sampler2D myTex;
+uniform bool useColorOverride;
+uniform vec4 colorOverride;
 
 void main()
 {
-   FragColor1 = mix(col, texture(myTex, TexCoords), 0.35);
+    if ( useColorOverride )
+    {
+        FragColor1 = colorOverride;
+    }
+    else
+    {
+        FragColor1 = mix(col, texture(myTex, TexCoords), 0.35);
+    }
 }
