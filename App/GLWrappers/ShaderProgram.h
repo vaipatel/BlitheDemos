@@ -20,9 +20,11 @@ namespace blithe
         void Bind() const;
         void Unbind() const;
 
+        void SetUniformBool(const std::string& _name, bool _value);
         void SetUniform1f(const std::string& _name, float _value);
         void SetUniform1i(const std::string& _name, int _value);
         void SetUniformVec3f(const std::string& _name, const glm::vec3& _value);
+        void SetUniformVec4f(const std::string& _name, const glm::vec4& _value);
         void SetUniformMat4f(const std::string& _name, const glm::mat4& _value);
 
     private:

@@ -63,6 +63,11 @@ namespace blithe
         glUseProgram(0);
     }
 
+    void ShaderProgram::SetUniformBool(const std::string& _name, bool _value)
+    {
+        SetUniform1i(_name, _value);
+    }
+
     /*!
      * \brief Sets the value _value for the floating-point uniform named _name.
      *
@@ -94,6 +99,11 @@ namespace blithe
     void ShaderProgram::SetUniformVec3f(const std::string& _name, const glm::vec3& _value)
     {
         glUniform3fv(glGetUniformLocation(m_programID, _name.c_str()), 1, &_value[0]);
+    }
+
+    void ShaderProgram::SetUniformVec4f(const std::string& _name, const glm::vec4& _value)
+    {
+        glUniform4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, &_value[0]);
     }
 
     /*!
