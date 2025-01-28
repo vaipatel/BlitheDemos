@@ -2,6 +2,29 @@ cmake_minimum_required(VERSION 3.22)
 
 # VCPKG
 # -----
+# Triplets
+# Detect the platform and compiler using pre-project() variables
+if(WIN32)  # WIN32 is defined on Windows systems
+    # Check the generator to infer the compiler
+    if(CMAKE_GENERATOR MATCHES "MinGW" OR CMAKE_GENERATOR MATCHES "Ninja")
+        # MinGW compiler (or Ninja with MinGW)
+        set(VCPKG_DEFAULT_TRIPLET "x64-mingw-dynamic")
+    else()
+        # Assume MSVC or other Windows compilers
+        set(VCPKG_DEFAULT_TRIPLET "x64-windows")
+    endif()
+elseif(UNIX AND NOT APPLE)  # UNIX is defined on Linux and other UNIX-like systems
+    # Linux platform
+    set(VCPKG_DEFAULT_TRIPLET "x64-linux")
+else()
+    message(WARNING "Unsupported platform. Defaulting to x64-windows.")
+    set(VCPKG_DEFAULT_TRIPLET "x64-windows")  # Fallback for unsupported platforms
+endif()
+
+# Set both target and host triplets to the same value
+set(VCPKG_HOST_TRIPLET "${VCPKG_DEFAULT_TRIPLET}" CACHE STRING "Host triplet (same as target)")
+set(VCPKG_TARGET_TRIPLET "${VCPKG_DEFAULT_TRIPLET}" CACHE STRING "Default triplet")
+
 # Toolchain
 if(DEFINED ENV{VCPKG_ROOT})
     file(TO_CMAKE_PATH $ENV{VCPKG_ROOT} VCPKG_ROOT)
@@ -10,10 +33,6 @@ if(DEFINED ENV{VCPKG_ROOT})
 else()
     message(FATAL_ERROR "VCPKG_ROOT is not defined")
 endif()
-
-# Triplets
-set(VCPKG_TARGET_TRIPLET x64-mingw-dynamic CACHE STRING "")
-set(VCPKG_HOST_TRIPLET x64-mingw-dynamic CACHE STRING "")
 
 # Project
 # -------
@@ -53,15 +72,7 @@ find_package(glm QUIET)
 
 # Assimp
 # ------
-set(ASSIMP_DIR ${PROJECT_SOURCE_DIR}/Extern/assimp)
-
-# Add Assimp as a subdirectory to build it as part of the project
-set(ASSIMP_BUILD_TESTS OFF)          # Disable building Assimp tests
-set(ASSIMP_NO_EXPORT ON)             # Disable export functionality if not needed
-set(ASSIMP_WARNINGS_AS_ERRORS OFF)
-set(BUILD_SHARED_LIBS OFF)
-add_subdirectory(${ASSIMP_DIR})
-
+find_package(assimp CONFIG REQUIRED)
 
 # My sources and headers
 # ----------------------
@@ -158,7 +169,6 @@ target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrapp
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Objects)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Utils)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/Extern)
-target_include_directories(BlitheDemos PRIVATE ${ASSIMP_DIR}/include)
 target_include_directories(BlitheDemos PRIVATE ${Stb_INCLUDE_DIR})
 
 # Preprocessor
@@ -176,10 +186,7 @@ target_link_libraries(BlitheDemos PRIVATE OpenGL::GL)
 target_link_libraries(BlitheDemos PRIVATE glad::glad)
 target_link_libraries(BlitheDemos PRIVATE glfw)
 target_link_libraries(BlitheDemos PRIVATE imgui::imgui)
-
-# Link against Assimp
-# -------------------
-target_link_libraries(BlitheDemos PRIVATE assimp)
+target_link_libraries(BlitheDemos PRIVATE assimp::assimp)
 
 # Copy shaders over to a "Shaders" directory next to the app
 # ----------------------------------------------------------
