@@ -189,7 +189,7 @@ namespace blithe
                 if (m_standardViewPortTarget)
                 {
                     // Convert GLuint to ImTextureID (a.k.a. void*) for ImGui
-                    ImTextureID texID = reinterpret_cast<ImTextureID>(static_cast<intptr_t>(m_standardViewPortTarget->GetTargetTexture()->GetHandle()));
+                    ImTextureID texID = reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_standardViewPortTarget->GetTargetTexture()->GetHandle()));
 
                     // Display the texture in the ImGui window
                     int textureWidth = m_standardViewPortTarget->GetTargetTexture()->GetWidth();

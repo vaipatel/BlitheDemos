@@ -1,6 +1,7 @@
 #ifndef MESHITERATOR_H
 #define MESHITERATOR_H
 
+#include <cstddef>
 #include <functional>
 
 namespace blithe
