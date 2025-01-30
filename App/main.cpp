@@ -275,22 +275,18 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
         mouseCbkData.m_firstMouse = false;
     }
 
-    if ( mouseCbkData.m_pressed )
-    {
-        mouseCbkData.m_dragged = true;
-    }
-    else
-    {
-        mouseCbkData.m_dragged = false;
-    }
-
     if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
         mouseCbkData.m_released = true;
         mouseCbkData.m_pressed = false;
+        mouseCbkData.m_dragged = false;
     }
     else if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
+        if ( mouseCbkData.m_pressed )
+        {
+            mouseCbkData.m_dragged = true;
+        }
         mouseCbkData.m_pressed = true;
         mouseCbkData.m_released = false;
     }
@@ -309,4 +305,7 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
     uiData.m_yPos = ypos;
     uiData.m_xOffset = xoffset;
     uiData.m_yOffset = yoffset;
+
+    //static uint64_t s_mousePrintIdx = 0;
+    //std::cout << "Mouse event: " << " print idx = " << s_mousePrintIdx++ << ", xoffset = " << xoffset << ", yoffset = " << yoffset << ", leftDragged = " << uiData.m_leftDragged << std::endl;
 }
