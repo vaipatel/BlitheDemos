@@ -10,6 +10,8 @@ namespace blithe
         m_distance = _eye.z;
         m_camera = Camera::FromTarget(_eye, m_target, {0.0f, 1.0f, 0.0f});
         m_sensitivity = 1.0f;
+
+        UpdateCameraPosition();
     }
 
     ArcBallCameraDecorator::~ArcBallCameraDecorator()
