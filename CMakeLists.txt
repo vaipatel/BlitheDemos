@@ -22,8 +22,8 @@ else()
 endif()
 
 # Set both target and host triplets to the same value
-set(VCPKG_HOST_TRIPLET "${VCPKG_DEFAULT_TRIPLET}" CACHE STRING "Host triplet (same as target)")
 set(VCPKG_TARGET_TRIPLET "${VCPKG_DEFAULT_TRIPLET}" CACHE STRING "Default triplet")
+set(VCPKG_HOST_TRIPLET "${VCPKG_DEFAULT_TRIPLET}" CACHE STRING "Host triplet (same as target)")
 
 # Toolchain
 if(DEFINED ENV{VCPKG_ROOT})
