@@ -31,7 +31,7 @@ namespace blithe
                                          const Tri& _splitter);
         void AddTriToFront(const Tri& _tri);
         void AddTriToBack(const Tri& _tri);
-        float CalcImplicitFunc(const glm::vec3& _point);
+        float CalcImplicitFunc(const glm::vec3& _point, float _snapToZeroTol);
         static glm::vec3 FindIntersectionWithTriPlane(const glm::vec3& _start,
                                                       const glm::vec3& _end,
                                                       const Tri& _tri);

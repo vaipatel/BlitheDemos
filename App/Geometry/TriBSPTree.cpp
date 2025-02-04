@@ -45,24 +45,9 @@ namespace blithe
         }
 
         // Classify the 3 vertices of _tri w.r.t. this node's plane
-        float fa = CalcImplicitFunc(_tri.m_v0.m_pos);
-        float fb = CalcImplicitFunc(_tri.m_v1.m_pos);
-        float fc = CalcImplicitFunc(_tri.m_v2.m_pos);
-
-        if ( abs(fa) < MIN_F_VAL )
-        {
-            fa = 0.0f;
-        }
-
-        if ( abs(fb) < MIN_F_VAL )
-        {
-            fb = 0.0f;
-        }
-
-        if ( abs(fc) < MIN_F_VAL )
-        {
-            fc = 0.0f;
-        }
+        float fa = CalcImplicitFunc(_tri.m_v0.m_pos, MIN_F_VAL);
+        float fb = CalcImplicitFunc(_tri.m_v1.m_pos, MIN_F_VAL);
+        float fc = CalcImplicitFunc(_tri.m_v2.m_pos, MIN_F_VAL);
 
         // If the implicit function evaluates to 0 for all 3 vertices of _tri, we classify _tri
         // as being coplanar with this node's plane ..
@@ -132,11 +117,7 @@ namespace blithe
         if ( !_root ) return;
 
         // Classify _cameraPos w.r.t. _root
-        float d = _root->CalcImplicitFunc(_cameraPos);
-        if ( abs(d) < MIN_F_VAL )
-        {
-            d = 0;
-        }
+        float d = _root->CalcImplicitFunc(_cameraPos, MIN_F_VAL);
 
         // As is stated in "IMAGE GENERATION PHASE" of "On visible surface generation by a
         // priori tree structures":
@@ -268,7 +249,7 @@ namespace blithe
     ///
     /// \return
     ///
-    float TriBSPTree::CalcImplicitFunc(const glm::vec3& _point)
+    float TriBSPTree::CalcImplicitFunc(const glm::vec3& _point, float _snapToZeroTol)
     {
         ASSERT(!m_coplanarTris.empty(), "Node triangle needs to have been populated to calc implicit func");
 
@@ -277,6 +258,12 @@ namespace blithe
         m_coplanarTris.front().CalcNormalAndD(normal, d);
 
         float val = glm::dot(normal, _point) + d;
+
+        // Snap to zero if less than tolerance
+        if ( std::abs(val) < _snapToZeroTol )
+        {
+            val = 0.0f;
+        }
 
         return val;
     }
