@@ -1,4 +1,5 @@
 #include "YawPitchCameraDecorator.h"
+#include "BlitheShared.h"
 
 namespace blithe
 {
@@ -38,7 +39,7 @@ namespace blithe
                                                    bool _leftDragged, float _deltaTime,
                                                    bool _constrainPitch/*=true*/)
     {
-        _CRT_UNUSED(_deltaTime);
+        UNUSED_ARG(_deltaTime);
 
         _xOffset *= m_sensitivity;
         _yOffset *= m_sensitivity;

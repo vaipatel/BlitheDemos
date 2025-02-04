@@ -1,5 +1,6 @@
 #include "ArcBallCameraDecorator.h"
 #include <glm/gtx/quaternion.hpp>
+#include "BlitheShared.h"
 //#include <iostream>
 
 namespace blithe
@@ -40,8 +41,8 @@ namespace blithe
     void ArcBallCameraDecorator::ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged,
                                                   float _deltaTime, bool _constrainPitch/*=true*/)
     {
-        _CRT_UNUSED(_deltaTime);
-        _CRT_UNUSED(_constrainPitch);
+        UNUSED_ARG(_deltaTime);
+        UNUSED_ARG(_constrainPitch);
 
         if (!_leftDragged)
             return;

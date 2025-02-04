@@ -21,6 +21,9 @@ namespace blithe
         delete _x;
         _x = nullptr;
     }
+
+    //! Macro for suppressing unused function arg warnings
+    #define UNUSED_ARG(arg) ((void)(arg))
 }
 
 #endif // BLITHESHARED_H
