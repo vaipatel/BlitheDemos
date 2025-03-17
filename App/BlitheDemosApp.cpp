@@ -12,6 +12,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include <tracy/Tracy.hpp>
 
 #include "BlitheAssert.h"
 #include "BlitheShared.h"
@@ -69,6 +70,8 @@ namespace blithe
     ///
     void BlitheDemosApp::DrawUI(UIData& _uiData)
     {
+        ZoneScoped;
+
         // The entire app UI is a DockSpace. So begin the DockSpace.
         StartDockSpace();
 
@@ -102,6 +105,8 @@ namespace blithe
     ///
     void BlitheDemosApp::RenderSelectedDemo(const UIData& _uiData)
     {
+        ZoneScoped;
+
         UIData uiData = _uiData;
 
         if (m_currentDemo)

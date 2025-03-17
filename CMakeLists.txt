@@ -38,7 +38,7 @@ endif()
 # -------
 project(BlitheDemos)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 14)
 
 if(MSVC)
     # If I don't set the below to MD, I get LNK4217 warnings and LNK2019 errors with glfw3.lib
@@ -73,6 +73,10 @@ find_package(glm QUIET)
 # Assimp
 # ------
 find_package(assimp CONFIG REQUIRED)
+
+# Tracy
+# -----
+find_package(Tracy CONFIG REQUIRED)
 
 # My sources and headers
 # ----------------------
@@ -174,6 +178,7 @@ target_include_directories(BlitheDemos PRIVATE ${Stb_INCLUDE_DIR})
 # Preprocessor
 # ------------
 target_compile_definitions(BlitheDemos PUBLIC GLM_ENABLE_EXPERIMENTAL)
+add_compile_definitions(TRACY_ENABLE)
 
 # Add shaders to the executable so they show up in IDEs
 # -----------------------------------------------------
@@ -187,6 +192,7 @@ target_link_libraries(BlitheDemos PRIVATE glad::glad)
 target_link_libraries(BlitheDemos PRIVATE glfw)
 target_link_libraries(BlitheDemos PRIVATE imgui::imgui)
 target_link_libraries(BlitheDemos PRIVATE assimp::assimp)
+target_link_libraries(BlitheDemos PRIVATE Tracy::TracyClient)
 
 # Copy shaders over to a "Shaders" directory next to the app
 # ----------------------------------------------------------
