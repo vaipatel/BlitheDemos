@@ -11,7 +11,7 @@ void main()
 {
     if ( useColorOverride )
     {
-        FragColor1 = colorOverride;
+        FragColor1 = mix(colorOverride, mix(col, texture(myTex, TexCoords), 0.35), 0.5);
     }
     else
     {

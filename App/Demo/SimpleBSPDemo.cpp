@@ -21,6 +21,7 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
+#include <tracy/Tracy.hpp>
 
 namespace blithe
 {
@@ -30,15 +31,12 @@ namespace blithe
     SimpleBSPDemo::~SimpleBSPDemo()
     {
         glDisable(GL_DEPTH_TEST);
-        for ( MeshObject* cube : m_cubes)
-        {
-            delete cube;
-        }
-        m_cubes.clear();
+        ClearAllBSPMeshObjects();
         delete m_shader;
         delete m_texture;
         delete m_cameraDecorator;
         delete m_bspTree;
+        delete m_torus;
     }
 
     void SimpleBSPDemo::OnInit()
@@ -70,10 +68,30 @@ namespace blithe
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
         glm::mat4 viewProjection = projection * view;
 
-        UpdateBSPTree(m_cameraDecorator->GetCamera());
+        // Switch between iterative batched nodes and full tree traversal.
+        if ( m_dbgBatchedOrFullTraversal )
+        {
+            UpdateBSPTreeIterative(m_cameraDecorator->GetCamera());
+        }
+        else
+        {
+            UpdateBSPTreeFull(m_cameraDecorator->GetCamera());
+        }
 
         m_shader->Bind();
         m_shader->SetUniformMat4f("viewProjection", viewProjection);
+
+        // If we're doing iterative batched nodes traversal or view, show the wireframe while we're
+        // traversing/view to mitigate crappy UX due to disappearing/missing triangles.
+        if ( m_traversing || (m_maxDbgTrisPerRenderLoop > 0 && m_maxDbgTrisPerRenderLoop < m_bspNumTris) )
+        {
+            if ( m_torus )
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                m_torus->Render();
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+        }
 
         size_t activeUnitOffset = 0;
         m_texture->Bind(activeUnitOffset);
@@ -82,18 +100,24 @@ namespace blithe
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        m_shader->SetUniformBool("useColorOverride", m_dbgBackToFrontWithGradient);
-        ASSERT(m_dbgBackToFrontGradient.size() == m_meshObjects.size(), "Gradient for debugging back to front polygon ordering is not populated correctly. Expected size " << m_meshObjects.size() << ", got " << m_dbgBackToFrontGradient.size());
-
-        for ( size_t objIdx = 0; objIdx < m_meshObjects.size(); objIdx++ )
+        //m_shader->SetUniformBool("useColorOverride", m_dbgBackToFrontWithGradient);
+        if ( m_dbgBackToFrontWithGradient )
         {
-            std::vector<MeshObject*>& meshObjects = m_meshObjects[objIdx];
-            m_shader->SetUniformVec4f("colorOverride", m_dbgBackToFrontGradient[objIdx]);
-            for ( MeshObject* object : meshObjects )
+            ReInitDbgVars();
+            DrawDbgTris(deltaTimeS);
+        }
+        else
+        {
+            for ( size_t objIdx = 0; objIdx < m_bspMeshObjects.size(); objIdx++ )
             {
-                object->Render();
+                std::vector<MeshObject*>& coplanarMeshObjects = m_bspMeshObjects[objIdx];
+                for ( MeshObject* object : coplanarMeshObjects )
+                {
+                    object->Render();
+                }
             }
         }
+
         glDisable(GL_BLEND);
         m_shader->Unbind();
 
@@ -104,12 +128,31 @@ namespace blithe
     {
         ImGui::Begin("SimpleBSPDemo Params");
 
+        // Checkbox for switching between batched nodes tree traversal and full tree traversal
+        bool dbgBatchedOrFullTraversal = m_dbgBatchedOrFullTraversal;
+        ImGui::Checkbox("Do Batched Nodes Iterative Traversal", &dbgBatchedOrFullTraversal);
+        if ( m_dbgBatchedOrFullTraversal != dbgBatchedOrFullTraversal )
+        {
+            m_dbgVarsValid = false;
+            m_prevView = glm::mat4(0.0);
+            m_dbgBatchedOrFullTraversal = dbgBatchedOrFullTraversal;
+        }
+
         // Checkbox for debugging back-to-front polygon ordering with a gradient coloring
-        ImGui::Checkbox("Color Back To Front", &m_dbgBackToFrontWithGradient);
+        bool dbgBackToFrontWithGradient = m_dbgBackToFrontWithGradient;
+        ImGui::Checkbox("Color Back To Front", &dbgBackToFrontWithGradient);
+        if ( m_dbgBackToFrontWithGradient != dbgBackToFrontWithGradient )
+        {
+            m_dbgVarsValid = false;
+            m_dbgBackToFrontWithGradient = dbgBackToFrontWithGradient;
+        }
 
         ImGui::End();
     }
 
+    ///
+    /// \brief Sets up the Torus mesh
+    ///
     void SimpleBSPDemo::SetupTorus()
     {
         glm::mat4 modelTransform(1.0f);
@@ -119,12 +162,17 @@ namespace blithe
         m_torus->SetInstances({glm::mat4(1.0f)});
     }
 
+    ///
+    /// \brief Sets up the meshes for the central cubes
+    ///
     void SimpleBSPDemo::SetupCubes()
     {
+        ASSERT(m_cubeMeshes.empty(), "Ensure m_cubes is empty before calling SetupCubes()");
+
         glm::vec3 sides(2,2,2);
 
         std::vector<glm::vec4> colors = {
-            { 1.0f, 0.0f, 0.0f, 0.4f }, // red
+            { 1.0f, 0.0f, 0.0f, 0.2f }, // red
             { 0.0f, 1.0f, 0.0f, 0.4f }, // green
             { 0.0f, 0.0f, 1.0f, 0.4f }, // blue
             { 1.0f, 1.0f, 0.0f, 0.4f }, // yellow
@@ -146,10 +194,15 @@ namespace blithe
         }
     }
 
+    ///
+    /// \brief Reinitializes the bsp tree and adds all mesh triangles to it.
+    ///
     void SimpleBSPDemo::SetupBSPTree()
     {
         DeleteAndNull(m_bspTree);
         m_bspTree = new TriBSPTree();
+
+        size_t origNumTris = 0;
         for ( size_t i = 0; i < m_cubeMeshes.size(); i++ )
         {
             Mesh mesh = m_cubeMeshes[i];
@@ -161,11 +214,12 @@ namespace blithe
                 Tri tri = meshView.GetTriangle(triIdx);
                 m_bspTree->AddTriangle(tri);
             }
+            origNumTris += numTris;
         }
 
+        if ( m_torus )
         {
-            const Mesh& mesh = m_torus->GetMesh();
-            MeshView meshView(mesh);
+            MeshView meshView(m_torus->GetMesh());
             size_t numTris = meshView.GetNumTriangles();
             std::vector<size_t> randomizedTriIndices = GetShuffledIndices(numTris);
             for ( size_t triIdx : randomizedTriIndices )
@@ -173,28 +227,37 @@ namespace blithe
                 Tri tri = meshView.GetTriangle(triIdx);
                 m_bspTree->AddTriangle(tri);
             }
+            origNumTris += numTris;
         }
+
+        TriBSPTree::CountTotalNumTris(m_bspTree, m_bspNumTris);
+        std::cout << "\nSimpleBSPDemo: "
+                  << "origNumTris = " << origNumTris << ", "
+                  << "bspNumTris = " << m_bspNumTris << std::endl;
     }
 
-    void SimpleBSPDemo::UpdateBSPTree(const Camera& _camera)
+    ///
+    /// \brief Traverses the full BSP tree using the _camera position.
+    ///
+    ///        If there are many nodes, this will be very slow. The UpdateBSPTreeIterative() can be
+    ///        called successively to traverse the tree a limited number of nodes at a time.
+    ///
+    /// \param _camera - Camera position to use for traversal
+    ///
+    void SimpleBSPDemo::UpdateBSPTreeFull(const Camera& _camera)
     {
+        ZoneScoped;
+
+        // Only traverse if the view has changed
         if ( _camera.GetViewMatrix() != m_prevView && m_bspTree )
         {
             m_prevView = _camera.GetViewMatrix();
 
-            for ( size_t i = 0; i < m_meshObjects.size(); i++ )
-            {
-                std::vector<MeshObject*>& meshObjects = m_meshObjects[i];
-                for ( MeshObject* object : meshObjects )
-                {
-                    DeleteAndNull(object);
-                }
-            }
-            m_meshObjects.clear();
+            ClearAllBSPMeshObjects();
 
             // Traverse tree
             std::vector<std::vector<Tri>> trisList;
-            TriBSPTree::Traverse(m_bspTree, _camera.GetPosition(), trisList);
+            TriBSPTree::TraverseRecursively(m_bspTree, _camera.GetPosition(), trisList);
 
             for ( size_t i = 0; i < trisList.size(); i++ )
             {
@@ -213,10 +276,133 @@ namespace blithe
                     object->SetInstances({glm::mat4(1.0f)});
                     meshObjects.push_back(object);
                 }
-                m_meshObjects.push_back(meshObjects);
+                m_bspMeshObjects.push_back(meshObjects);
             }
 
-            m_dbgBackToFrontGradient = InterpolateColors({1,0,0,1.0},{1,1,1,0.1},m_meshObjects.size());
+            m_dbgVarsValid = false;
+        }
+    }
+
+    ///
+    /// \brief Traverses the BSP tree in batches of nodes using the _camera position.
+    ///
+    ///        Breaking up the traversal helps keep the framerate reasonable. The trade off is that
+    ///        when the camera is moved, all the triangles disappear and start getting displayed
+    ///        in batches, which makes for crappy UX. Maybe a base "skeleton" with few triangle or
+    ///        lines can be rendered as the scene is being built so the user has a better sense of
+    ///        their actions.
+    ///
+    /// \param _camera - Camera position to use for traversal
+    ///
+    void SimpleBSPDemo::UpdateBSPTreeIterative(const Camera& _camera)
+    {
+        ZoneScoped;
+
+        // Only traverse if the view has changed
+        if ( _camera.GetViewMatrix() != m_prevView && m_bspTree )
+        {
+            m_prevView = _camera.GetViewMatrix();
+
+            ClearAllBSPMeshObjects();
+
+            m_traversing = true;
+            m_nodeStack = std::stack<TriBSPTreeStackEntry>();
+        }
+
+        if ( m_traversing )
+        {
+            // Traverse tree
+            std::vector<std::vector<Tri>> trisList;
+            TriBSPTree::TraverseWithStackIterative(m_bspTree,
+                                                   _camera.GetPosition(),
+                                                   trisList,
+                                                   m_nodeStack,
+                                                   24);
+            m_traversing = !m_nodeStack.empty();
+
+            for ( size_t i = 0; i < trisList.size(); i++ )
+            {
+                const std::vector<Tri>& coplanarTris = trisList[i];
+                std::vector<MeshObject*> coplanarMeshObjects;
+                for ( const Tri& tri : coplanarTris )
+                {
+                    Mesh mesh;
+                    mesh.m_vertices.push_back(tri.m_v0);
+                    mesh.m_vertices.push_back(tri.m_v1);
+                    mesh.m_vertices.push_back(tri.m_v2);
+                    mesh.m_indices.push_back(0);
+                    mesh.m_indices.push_back(1);
+                    mesh.m_indices.push_back(2);
+                    MeshObject* object = new MeshObject(mesh);
+                    object->SetInstances({glm::mat4(1.0f)});
+                    coplanarMeshObjects.push_back(object);
+                }
+                m_bspMeshObjects.push_back(coplanarMeshObjects);
+            }
+
+            m_dbgVarsValid = false;
+        }
+    }
+
+    ///
+    /// \brief Clears the list of all bsp mesh objects after deleting them.
+    ///
+    void SimpleBSPDemo::ClearAllBSPMeshObjects()
+    {
+        for ( size_t i = 0; i < m_bspMeshObjects.size(); i++ )
+        {
+            std::vector<MeshObject*>& coplanarMeshObjects = m_bspMeshObjects[i];
+            for ( MeshObject* object : coplanarMeshObjects )
+            {
+                DeleteAndNull(object);
+            }
+        }
+        m_bspMeshObjects.clear();
+    }
+
+    ///
+    /// \brief If debug vars were marked invalid, this reinitializes them.
+    ///
+    void SimpleBSPDemo::ReInitDbgVars()
+    {
+        if ( !m_dbgVarsValid )
+        {
+            m_dbgVarsValid = true;
+            m_dbgBackToFrontGradient = InterpolateColors({1,0,0,1.0},{1,1,1,0.1},m_bspMeshObjects.size());
+            m_maxDbgTrisPerRenderLoop = 0;
+            m_dbgTimeAccumulatorS = 0;
+        }
+    }
+
+    ///
+    /// \brief Animates the draw of the bsp traversed triangles to debug the back-to-front order.
+    ///
+    /// \param _deltaTimeS - (sec) Time since last frame
+    ///
+    void SimpleBSPDemo::DrawDbgTris(float _deltaTimeS)
+    {
+        ASSERT(m_dbgBackToFrontGradient.size() == m_bspMeshObjects.size(), "Gradient for debugging back to front polygon ordering is not populated correctly. Expected size " << m_bspMeshObjects.size() << ", got " << m_dbgBackToFrontGradient.size());
+
+        m_dbgTimeAccumulatorS += _deltaTimeS;
+        if ( m_dbgTimeAccumulatorS >= 0.01 )
+        {
+            m_dbgTimeAccumulatorS = 0;
+            m_maxDbgTrisPerRenderLoop += 1;
+        }
+
+        size_t numTrisSoFar = 0;
+        bool done = false;
+        for ( size_t objIdx = 0; objIdx < m_bspMeshObjects.size() && !done; objIdx++ )
+        {
+            std::vector<MeshObject*>& coplanarMeshObjects = m_bspMeshObjects[objIdx];
+            m_shader->SetUniformVec4f("colorOverride", m_dbgBackToFrontGradient[objIdx]);
+            for ( size_t idx = 0; idx < coplanarMeshObjects.size() && !done; idx++ )
+            {
+                ++numTrisSoFar;
+                done = (numTrisSoFar >= m_maxDbgTrisPerRenderLoop);
+                MeshObject* object = coplanarMeshObjects[idx];
+                object->Render();
+            }
         }
     }
 

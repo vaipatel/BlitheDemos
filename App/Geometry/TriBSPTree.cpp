@@ -74,7 +74,7 @@ namespace blithe
         {
             SplitResult splitTris = SplitTriangle(_tri, {fa,fb,fc}, m_coplanarTris.front());
 
-            // std::cout << std::fixed << "t0 area = " << t0.Area() << ", t1 area = " << t1.Area() << ", t2 area = " << t2.Area() << std::endl;
+            // std::cout << std::fixed << "t0 area = " << splitTris.m_t0.Area() << ", t1 area = " << splitTris.m_t1.Area() << ", t2 area = " << splitTris.m_t2.Area() << std::endl;
             if ( splitTris.m_loneInFront )
             {
                 AddTriToFront(splitTris.m_t0);
@@ -111,8 +111,9 @@ namespace blithe
     ///                     polygons is desired
     /// \param _outTris   - (out) Back-to-front ordering of polygons (specifically triangles)
     ///
-    void TriBSPTree::Traverse(TriBSPTree* _root, const glm::vec3& _cameraPos,
-                              std::vector<std::vector<Tri>>& _outTris)
+    void TriBSPTree::TraverseRecursively(TriBSPTree* _root,
+                                         const glm::vec3& _cameraPos,
+                                         std::vector<std::vector<Tri>>& _outTris)
     {
         if ( !_root ) return;
 
@@ -128,23 +129,140 @@ namespace blithe
         if ( d > 0 )
         {
             // _cameraPos is in front, so start with the back tree
-            Traverse(_root->m_backTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_backTree, _cameraPos, _outTris);
             _outTris.push_back(_root->m_coplanarTris);
-            Traverse(_root->m_frontTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_frontTree, _cameraPos, _outTris);
         }
         else if ( d < 0 )
         {
             // _cameraPos is in the back, so start with the front tree
-            Traverse(_root->m_frontTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_frontTree, _cameraPos, _outTris);
             _outTris.push_back(_root->m_coplanarTris);
-            Traverse(_root->m_backTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_backTree, _cameraPos, _outTris);
         }
         else
         {
             // unsure, start with the front tree
-            Traverse(_root->m_frontTree, _cameraPos, _outTris);
-            Traverse(_root->m_backTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_frontTree, _cameraPos, _outTris);
+            TraverseRecursively(_root->m_backTree, _cameraPos, _outTris);
         }
+    }
+
+    ///
+    /// \brief Like Traverse(), but using data recursion and a _maxNodes to limit the number of
+    ///        nodes processed at once.
+    ///
+    ///        The recursion stack is stateful so successive calls will pick up from where the last
+    ///        call ended. If the stack is empty this will just do it all over again. I don't have a
+    ///        good way to let the caller know when to stop calling this. Perhaps they can do
+    ///        while ( !started && !_outNodeStack.empty() ) { started = true; // Traverse }
+    ///
+    /// \param _root         - Root of tree
+    /// \param _cameraPos    - Position (eye) of camera to w.r.t. which a back-to-front ordering of
+    ///                        polygons is desired
+    /// \param _outTris      - (out) Back-to-front ordering of polygons (specifically triangles)
+    /// \param _outNodeStack - (in/out) Modifiable stack provided by caller for iterative traversal
+    ///                                 of upto _maxNodes at a time
+    /// \param _maxNodes     - Max number of nodes processed at a time
+    ///
+    void TriBSPTree::TraverseWithStackIterative(TriBSPTree* _root,
+                                                const glm::vec3& _cameraPos,
+                                                std::vector<std::vector<Tri>>& _outTris,
+                                                std::stack<TriBSPTreeStackEntry>& _outNodeStack,
+                                                int _maxNodes)
+    {
+        // If we're given a root ..
+        if ( _root )
+        {
+            // and if the stack is empty, initialize it with the root node.
+            if ( _outNodeStack.empty() )
+            {
+                _outNodeStack.push({_root, false, nullptr});
+            }
+        }
+        // Else just process _outNodeStack.
+
+        while ( !_outNodeStack.empty() && _maxNodes > 0 )
+        {
+            TriBSPTreeStackEntry& currentEntry = _outNodeStack.top();
+            TriBSPTree* currentNode = currentEntry.m_node;
+
+            if ( currentEntry.m_firstSubtreeProcessed )
+            {
+                // Subtrees have been processed, so now we can add the coplanar triangles
+                _outTris.push_back(currentNode->m_coplanarTris);
+                _outNodeStack.pop();
+                _maxNodes--;
+                if ( currentEntry.m_secondSubtree )
+                {
+                    _outNodeStack.push({currentEntry.m_secondSubtree, false, nullptr});
+                }
+            }
+            else
+            {
+                // Mark that the first subtree will now be processed
+                currentEntry.m_firstSubtreeProcessed = true;
+
+                // Classify _cameraPos w.r.t. currentNode
+                float d = currentNode->CalcImplicitFunc(_cameraPos, MIN_F_VAL);
+
+                // As is stated in "IMAGE GENERATION PHASE" of "On visible surface generation by a
+                // priori tree structures":
+                //   Specifically, we are interested in the side (positive or negative) of the node's
+                //   polygon where the current viewing position is located. Let's call the two sides the
+                //   "containing" side and the "other" side. The traversal for a back-to-front ordering
+                //   is 1) the "other" side, 2) the node, and 3) the "containing" side.
+                if ( d > 0 )
+                {
+                    // _cameraPos is in front, so start with the back tree
+                    // NOTE: In own stack recursion, we need to swap the order in which the front and
+                    //       back subtrees are inserted compared to function recursion!
+                    if ( currentNode->m_backTree )
+                    {
+                        _outNodeStack.push({currentNode->m_backTree, false, nullptr});
+                    }
+                    currentEntry.m_secondSubtree = currentNode->m_frontTree;
+                }
+                else if ( d < 0 )
+                {
+                    // _cameraPos is in the back, so start with the front tree
+                    // NOTE: In own stack recursion, we need to swap the order in which the front and
+                    //       back subtrees are inserted compared to function recursion!
+                    if ( currentNode->m_frontTree )
+                    {
+                        _outNodeStack.push({currentNode->m_frontTree, false, nullptr});
+                    }
+                    currentEntry.m_secondSubtree = currentNode->m_backTree;
+                }
+                else
+                {
+                    // unsure, start with the front tree
+                    // NOTE: In own stack recursion, we need to swap the order in which the front and
+                    //       back subtrees are inserted compared to function recursion!
+                    if ( currentNode->m_frontTree )
+                    {
+                        _outNodeStack.push({currentNode->m_frontTree, false, nullptr});
+                    }
+                    currentEntry.m_secondSubtree = currentNode->m_backTree;
+                }
+            }
+        }
+    }
+
+    ///
+    /// \brief Counts the total number of triangles. Does a DFS to walk the tree at _root.
+    ///
+    /// \param _root       - Tree root
+    /// \param _outNumTris - (out) Total number of triangles
+    ///
+    void TriBSPTree::CountTotalNumTris(TriBSPTree* _root, size_t& _outNumTris)
+    {
+        if ( !_root ) return;
+
+        CountTotalNumTris(_root->m_backTree, _outNumTris);
+        //std::cout << ", " << _root->m_coplanarTris.size();
+        _outNumTris += _root->m_coplanarTris.size();
+        CountTotalNumTris(_root->m_frontTree, _outNumTris);
     }
 
     TriBSPTree::SplitResult TriBSPTree::SplitTriangle(const Tri& _tri,

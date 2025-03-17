@@ -2,10 +2,21 @@
 #define TRIBSPTREE_H
 
 #include "Tri.h"
+#include <stack>
 #include <vector>
 
 namespace blithe
 {
+    class TriBSPTree;
+
+    //! Entry in stack for data recursion
+    struct TriBSPTreeStackEntry
+    {
+        TriBSPTree* m_node = nullptr;          //!< Node being processed
+        bool m_firstSubtreeProcessed = false;  //!< Whether the first subtree has been processed
+        TriBSPTree* m_secondSubtree = nullptr; //!< Root of second subtree to process
+    };
+
     class TriBSPTree
     {
     public:
@@ -13,8 +24,16 @@ namespace blithe
         ~TriBSPTree();
 
         void AddTriangle(const Tri& _tri);
-        static void Traverse(TriBSPTree* _root, const glm::vec3& _cameraPos,
-                             std::vector<std::vector<Tri>>& _outTris);
+        static void TraverseRecursively(TriBSPTree* _root,
+                                        const glm::vec3& _cameraPos,
+                                        std::vector<std::vector<Tri>>& _outTris);
+        static void TraverseWithStackIterative(TriBSPTree* _root,
+                                               const glm::vec3& _cameraPos,
+                                               std::vector<std::vector<Tri>>& _outTris,
+                                               std::stack<TriBSPTreeStackEntry>& _outNodeStack,
+                                               int _maxNodes);
+
+        static void CountTotalNumTris(TriBSPTree* _root, size_t& _outNumTris);
 
         std::vector<Tri> m_coplanarTris; //!< Triangles coplanar to this node's plane, implicitly taken to be the plane of the first tri in this list.
 
