@@ -83,6 +83,7 @@ find_package(Tracy CONFIG REQUIRED)
 set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
+    ${PROJECT_SOURCE_DIR}/App/BlitheDemoFactories.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.cpp
@@ -104,6 +105,7 @@ set(BLITHE_DEMOS_SOURCES
 
 set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.h
+    ${PROJECT_SOURCE_DIR}/App/BlitheDemoFactories.h
     ${PROJECT_SOURCE_DIR}/App/UIData.h
     ${PROJECT_SOURCE_DIR}/App/Demo/DemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h

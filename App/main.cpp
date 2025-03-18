@@ -19,11 +19,7 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "BlitheDemosApp.h"
-#include "TriangleDemo.h"
-#include "CubeDemo.h"
-#include "InstancedCubeDemo.h"
-#include "GrassDemo.h"
-#include "SimpleBSPDemo.h"
+#include "BlitheDemoFactories.h"
 #include "UIData.h"
 
 #include <iostream>
@@ -150,12 +146,12 @@ int main(int, char**)
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    blithe::BlitheDemoFactories factories;
     blithe::BlitheDemosApp app;
-    app.AddDemoFactory(new blithe::TriangleDemoFactory());
-    app.AddDemoFactory(new blithe::CubeDemoFactory());
-    app.AddDemoFactory(new blithe::InstancedCubeDemoFactory());
-    app.AddDemoFactory(new blithe::GrassDemoFactory());
-    app.AddDemoFactory(new blithe::SimpleBSPDemoFactory());
+    for ( blithe::DemoFactory* fac : factories.m_demoFactories )
+    {
+        app.AddDemoFactory(fac);
+    }
 
 	// Main loop
 #ifdef __EMSCRIPTEN__

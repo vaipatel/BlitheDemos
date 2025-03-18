@@ -30,16 +30,11 @@ namespace blithe
     }
 
     ///
-    /// \brief Destructor. Deletes demo factories, current demo and standard viewport render target.
+    /// \brief Destructor. Deletes the current demo and standard viewport render target.
     ///
     BlitheDemosApp::~BlitheDemosApp()
     {
-        for (DemoFactory* fac : m_demoFactories)
-        {
-            delete fac;
-        }
         m_demoFactories.clear();
-
         delete m_currentDemo;
         delete m_standardViewPortTarget;
     }
