@@ -1,8 +1,10 @@
 #include "CubeDemo.h"
 #include "ArcBallCameraDecorator.h"
 #include "BlithePath.h"
+#include "CachedMeshObject.h"
 #include "GeomHelpers.h"
-#include "MeshObject.h"
+#include "GLBufferCache.h"
+#include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "UIData.h"
@@ -15,6 +17,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include <tracy/Tracy.hpp>
 
 namespace blithe
 {
@@ -24,7 +27,10 @@ namespace blithe
     CubeDemo::~CubeDemo()
     {
         glDisable(GL_DEPTH_TEST);
-        delete m_cube;
+        delete m_cachedCube;
+        m_glBufferCache->CleanUp();
+        delete m_glBufferCache;
+        delete m_cubeMesh;
         delete m_shader;
         delete m_texture;
         delete m_cameraDecorator;
@@ -40,7 +46,8 @@ namespace blithe
         m_shader = new ShaderProgram(exePath + "/Shaders/Triangle.vert", exePath + "/Shaders/Triangle.frag");
         m_cameraDecorator = new ArcBallCameraDecorator();
 
-        SetupCube();
+        SetupCubeMesh();
+        m_glBufferCache = new GLBufferCache();
     }
 
     /*!
@@ -48,6 +55,8 @@ namespace blithe
      */
     void CubeDemo::OnRender(double _deltaTimeS, const UIData& _uiData)
     {
+        ZoneScopedN("CubeDemo::OnRender");
+
         float deltaTimeS = static_cast<float>(_deltaTimeS);
 
         glEnable(GL_DEPTH_TEST);
@@ -81,7 +90,14 @@ namespace blithe
         m_texture->Bind(activeUnitOffset);
         m_shader->SetUniform1i("myTex", static_cast<int>(activeUnitOffset));
 
-        m_cube->Render();
+        {
+            ZoneScopedN("Cube");
+
+            m_cachedCube = new CachedMeshObject("Cube", m_cubeMesh, m_glBufferCache);
+            m_cachedCube->Render();
+            delete m_cachedCube;
+            m_cachedCube = nullptr;
+        }
 
         m_shader->Unbind();
 
@@ -117,10 +133,10 @@ namespace blithe
         ImGui::End();
     }
 
-    /*!
-     * \brief Helper to setup the cube
-     */
-    void CubeDemo::SetupCube()
+    ///
+    /// \brief Sets up the cube mesh data
+    ///
+    void CubeDemo::SetupCubeMesh()
     {
         glm::vec3 sides(2,2,2);
 
@@ -136,8 +152,7 @@ namespace blithe
         };
 
         Mesh mesh = GeomHelpers::CreateCuboid(sides, colors);
-
-        m_cube = new MeshObject(mesh);
+        m_cubeMesh = new Mesh(mesh);
     }
 
     void CubeDemo::ProcessKeys(const UIData& _uiData, float _deltaTime)

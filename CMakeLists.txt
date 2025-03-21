@@ -82,6 +82,7 @@ find_package(Tracy CONFIG REQUIRED)
 # ----------------------
 set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/main.cpp
+    ${PROJECT_SOURCE_DIR}/App/Caches/GLBufferCache.cpp
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.cpp
     ${PROJECT_SOURCE_DIR}/App/BlitheDemoFactories.cpp
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.cpp
@@ -98,6 +99,7 @@ set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.cpp
+    ${PROJECT_SOURCE_DIR}/App/Objects/CachedMeshObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.cpp
     ${PROJECT_SOURCE_DIR}/App/Utils/BlithePath.cpp
@@ -107,6 +109,8 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.h
     ${PROJECT_SOURCE_DIR}/App/BlitheDemoFactories.h
     ${PROJECT_SOURCE_DIR}/App/UIData.h
+    ${PROJECT_SOURCE_DIR}/App/Caches/GLBufferCache.h
+    ${PROJECT_SOURCE_DIR}/App/Caches/IGLBufferCache.h
     ${PROJECT_SOURCE_DIR}/App/Demo/DemoInterface.h
     ${PROJECT_SOURCE_DIR}/App/Demo/CubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/GrassDemo.h
@@ -128,7 +132,10 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/Texture.h
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/TextureData.h
+    ${PROJECT_SOURCE_DIR}/App/GLWrappers/VBOVertexFormat.h
+    ${PROJECT_SOURCE_DIR}/App/Objects/CachedMeshObject.h
     ${PROJECT_SOURCE_DIR}/App/Objects/MeshObject.h
+    ${PROJECT_SOURCE_DIR}/App/Objects/RenderObject.h
     ${PROJECT_SOURCE_DIR}/App/Objects/TrisObject.h
     ${PROJECT_SOURCE_DIR}/App/Utils/BlitheAssert.h
     ${PROJECT_SOURCE_DIR}/App/Utils/BlithePath.h
@@ -169,6 +176,7 @@ source_group(TREE "${PROJECT_SOURCE_DIR}/App" PREFIX "Shaders" FILES ${BLITHE_DE
 # Include directories
 # -------------------
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App)
+target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Caches)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Demo)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/Geometry)
 target_include_directories(BlitheDemos PRIVATE ${PROJECT_SOURCE_DIR}/App/GLWrappers)

@@ -5,8 +5,10 @@
 
 namespace blithe
 {
+    class CachedMeshObject;
+    class IGLBufferCache;
     class ShaderProgram;
-    class MeshObject;
+    struct Mesh;
     class Texture;
     class CameraDecorator;
 
@@ -24,12 +26,14 @@ namespace blithe
         bool UsesStandardViewPort() const override { return true; }
 
     private:
-        void SetupCube();
+        void SetupCubeMesh();
         void ProcessKeys(const UIData& _uiData, float _deltaTime);
         void ProcessMouseMove(const UIData& _uiData, float _deltaTime);
 
         ShaderProgram* m_shader = nullptr;
-        MeshObject* m_cube = nullptr;
+        Mesh* m_cubeMesh = nullptr;
+        CachedMeshObject* m_cachedCube = nullptr;
+        IGLBufferCache* m_glBufferCache = nullptr;
         Texture* m_texture = nullptr;
         CameraDecorator* m_cameraDecorator = nullptr;
         float m_rotationSpeed = 0.5f;   //!< Value from UI control for the Rotation Speed
