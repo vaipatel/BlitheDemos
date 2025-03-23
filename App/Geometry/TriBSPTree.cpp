@@ -189,7 +189,8 @@ namespace blithe
 
             if ( currentEntry.m_firstSubtreeProcessed )
             {
-                // Subtrees have been processed, so now we can add the coplanar triangles
+                // First subtree has been processed, so now we can add the coplanar triangles and
+                // then the second subtree.
                 _outTris.push_back(currentNode->m_coplanarTris);
                 _outNodeStack.pop();
                 _maxNodes--;
@@ -215,8 +216,6 @@ namespace blithe
                 if ( d > 0 )
                 {
                     // _cameraPos is in front, so start with the back tree
-                    // NOTE: In own stack recursion, we need to swap the order in which the front and
-                    //       back subtrees are inserted compared to function recursion!
                     if ( currentNode->m_backTree )
                     {
                         _outNodeStack.push({currentNode->m_backTree, false, nullptr});
@@ -226,8 +225,6 @@ namespace blithe
                 else if ( d < 0 )
                 {
                     // _cameraPos is in the back, so start with the front tree
-                    // NOTE: In own stack recursion, we need to swap the order in which the front and
-                    //       back subtrees are inserted compared to function recursion!
                     if ( currentNode->m_frontTree )
                     {
                         _outNodeStack.push({currentNode->m_frontTree, false, nullptr});
@@ -237,8 +234,6 @@ namespace blithe
                 else
                 {
                     // unsure, start with the front tree
-                    // NOTE: In own stack recursion, we need to swap the order in which the front and
-                    //       back subtrees are inserted compared to function recursion!
                     if ( currentNode->m_frontTree )
                     {
                         _outNodeStack.push({currentNode->m_frontTree, false, nullptr});
