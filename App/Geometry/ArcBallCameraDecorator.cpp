@@ -73,6 +73,13 @@ namespace blithe
         UpdateCameraPosition();
     }
 
+    void ArcBallCameraDecorator::ProcessMouseScroll(float _scrollX, float _scrollY, float _deltaTime)
+    {
+        m_distance += -_scrollY;
+        //std::cout << "Scroll Y: " << _scrollY << std::endl;
+        UpdateCameraPosition();
+    }
+
     ///
     /// \brief Wrapper to update the camera's position from the current target and distance,
     ///        and the camera's current front.

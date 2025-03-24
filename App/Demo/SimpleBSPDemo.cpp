@@ -432,10 +432,19 @@ namespace blithe
 
     void SimpleBSPDemo::ProcessMouseMove(const UIData& _uiData, float _deltaTime)
     {
-        if ( _uiData.m_mouseMoved && !_uiData.m_guiCaptured )
+        if ( !_uiData.m_guiCaptured )
         {
-            m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
-                                                _uiData.m_leftDragged, _deltaTime, true);
+            if ( _uiData.m_mouseMoved )
+            {
+                m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
+                                                    _uiData.m_leftDragged, _deltaTime, true);
+            }
+
+            if ( _uiData.m_scrolled )
+            {
+                m_cameraDecorator->ProcessMouseScroll(_uiData.m_scrollX, _uiData.m_scrollY,
+                                                      _deltaTime);
+            }
         }
     }
 

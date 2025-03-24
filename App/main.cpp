@@ -46,15 +46,16 @@ static void glfw_error_callback(int error, const char* description)
 void ProcessInput(GLFWwindow *window);
 
 void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos);
+void ScrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset);
 
 struct MouseCallbackData
 {
-    float m_lastX = 0.0f;
-    float m_lastY = 0.0f;
     bool m_firstMouse = true;
     bool m_pressed = false;
     bool m_released = false;
     bool m_dragged = false;
+    float m_lastX = 0.0f;
+    float m_lastY = 0.0f;
 };
 static MouseCallbackData mouseCbkData;
 
@@ -98,6 +99,7 @@ int main(int, char**)
     glfwSwapInterval(1); // Enable vsync
 
     glfwSetCursorPosCallback(window, MouseCallback);
+    glfwSetScrollCallback(window, ScrollCallback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -165,7 +167,7 @@ int main(int, char**)
     {
         ZoneScoped;
 
-        uiData.m_mouseMoved = false;
+        uiData = blithe::UIData();
 
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -308,3 +310,17 @@ void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
     //static uint64_t s_mousePrintIdx = 0;
     //std::cout << "Mouse event: " << " print idx = " << s_mousePrintIdx++ << ", xoffset = " << xoffset << ", yoffset = " << yoffset << ", leftDragged = " << uiData.m_leftDragged << std::endl;
 }
+
+void ScrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddMouseWheelEvent(_xoffset, _yoffset);
+
+    float xOffset = static_cast<float>(_xoffset);
+    float yOffset = static_cast<float>(_yoffset);
+
+    uiData.m_scrolled = true;
+    uiData.m_scrollX = xOffset;
+    uiData.m_scrollY = yOffset;
+}
+

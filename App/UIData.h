@@ -20,18 +20,19 @@ namespace blithe
      */
     struct UIData
     {
-        ImVec4 m_clearColor; //!< The main clear color
-        float m_aspect;      //!< The main viewport aspect ratio
-
+        bool m_guiCaptured = false;
+        bool m_mouseMoved = false;
+        bool m_leftDragged = false;
+        bool m_scrolled = false;
+        float m_xPos = FLT_MIN;
+        float m_yPos = FLT_MIN;
+        float m_xOffset = FLT_MIN;
+        float m_yOffset = FLT_MIN;
+        float m_scrollX = FLT_MIN;
+        float m_scrollY = FLT_MIN;
+        float m_aspect = FLT_MIN;   //!< The main viewport aspect ratio
+        ImVec4 m_clearColor;        //!< The main clear color
         std::unordered_set<enPressedKey> m_pressedKeys; //!< The pressed keys, per glfw
-
-        bool m_guiCaptured;
-        bool m_mouseMoved;
-        bool m_leftDragged;
-        float m_xPos;
-        float m_yPos;
-        float m_xOffset;
-        float m_yOffset;
     };
 }
 

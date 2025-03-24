@@ -14,6 +14,7 @@ namespace blithe
         void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) override;
         void ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged,
                               float _deltaTime, bool _constrainPitch = true) override;
+        void ProcessMouseScroll(float _scrollX, float _scrollY, float _deltaTime) override;
 
         glm::vec3 m_target;
         float m_distance;
