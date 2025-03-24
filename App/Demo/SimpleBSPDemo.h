@@ -70,13 +70,7 @@ namespace blithe
         bool m_dbgVarsValid = false; //!< For re-initializing the "dbg" vars
     };
 
-    class SimpleBSPDemoFactory : public DemoFactory
-    {
-    public:
-        ~SimpleBSPDemoFactory() override;
-        std::string GetName() const override;
-        DemoInterface* CreateDemo() override;
-    };
+    DECLARE_DEMO(SimpleBSPDemo, "Simple BSP Demo");
 }
 
 #endif // SIMPLEBSPDEMO_H

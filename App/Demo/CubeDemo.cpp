@@ -186,31 +186,4 @@ namespace blithe
                                                 _uiData.m_leftDragged, _deltaTime, true);
         }
     }
-
-    /*!
-     * \brief Factory destructor.
-     */
-    CubeDemoFactory::~CubeDemoFactory()
-    {
-    }
-
-    /*!
-     * Gets the name of the Cube Demo
-     * 
-     * \return Name of the Cube Demo
-     */
-    std::string CubeDemoFactory::GetName() const
-    {
-        return "Cube Demo";
-    }
-
-    /*!
-     * \brief Creates the CubeDemo.
-     * 
-     * \return A new CubeDemo
-     */
-    DemoInterface* CubeDemoFactory::CreateDemo()
-    {
-        return new CubeDemo();
-    }
 }

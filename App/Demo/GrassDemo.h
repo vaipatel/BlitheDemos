@@ -48,13 +48,7 @@ namespace blithe
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
     };
 
-    class GrassDemoFactory : public DemoFactory
-    {
-    public:
-        ~GrassDemoFactory() override;
-        std::string GetName() const override;
-        DemoInterface* CreateDemo() override;
-    };
+    DECLARE_DEMO(GrassDemo, "Grass Demo");
 }
 
 #endif // GRASSDEMO_H

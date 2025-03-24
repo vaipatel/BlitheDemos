@@ -7,16 +7,19 @@
 
 namespace blithe
 {
+#define ADD_DEMO(DemoClass) \
+    m_demoFactories.push_back(new blithe::DemoClass##Factory())
+
     ///
     /// \brief Default constructor. Creates all the demo factories.
     ///
     BlitheDemoFactories::BlitheDemoFactories()
     {
-        m_demoFactories.push_back(new blithe::TriangleDemoFactory());
-        m_demoFactories.push_back(new blithe::CubeDemoFactory());
-        m_demoFactories.push_back(new blithe::InstancedCubeDemoFactory());
-        m_demoFactories.push_back(new blithe::GrassDemoFactory());
-        m_demoFactories.push_back(new blithe::SimpleBSPDemoFactory());
+        ADD_DEMO(TriangleDemo);
+        ADD_DEMO(CubeDemo);
+        ADD_DEMO(InstancedCubeDemo);
+        ADD_DEMO(GrassDemo);
+        ADD_DEMO(SimpleBSPDemo);
     }
 
     ///

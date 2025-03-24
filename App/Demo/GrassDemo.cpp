@@ -342,32 +342,4 @@ namespace blithe
 
         return true;
     }
-
-
-    ///
-    /// \brief Factory destructor
-    ///
-    GrassDemoFactory::~GrassDemoFactory()
-    {
-    }
-
-    ///
-    /// \brief Gets the name of the Grass Demo
-    ///
-    /// \return Name of the Grass Demo
-    ///
-    std::string GrassDemoFactory::GetName() const
-    {
-        return "Grass Demo";
-    }
-
-    ///
-    /// \brief Creates the Grass Demo
-    ///
-    /// \return A new Grass Demo
-    ///
-    DemoInterface* GrassDemoFactory::CreateDemo()
-    {
-        return new GrassDemo();
-    }
 }

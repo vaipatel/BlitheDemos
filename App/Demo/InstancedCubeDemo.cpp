@@ -252,32 +252,4 @@ namespace blithe
 
         return modelMatrices;
     }
-
-
-    ///
-    /// \brief Factory destructor
-    ///
-    InstancedCubeDemoFactory::~InstancedCubeDemoFactory()
-    {
-    }
-
-    ///
-    /// \brief Gets the name of the Instanced Cube Demo
-    ///
-    /// \return Name of the Instanced Cube Demo
-    ///
-    std::string InstancedCubeDemoFactory::GetName() const
-    {
-        return "Instanced Cube Demo";
-    }
-
-    ///
-    /// \brief Creates the Instanced Cube Demo
-    ///
-    /// \return A new Instanced Cube Demo
-    ///
-    DemoInterface* InstancedCubeDemoFactory::CreateDemo()
-    {
-        return new InstancedCubeDemo();
-    }
 }

@@ -99,31 +99,4 @@ namespace blithe
         };
         m_tri = new TrisObject(triVertices);
     }
-
-    /*!
-     * \brief Factory destructor.
-     */
-    TriangleDemoFactory::~TriangleDemoFactory()
-    {
-    }
-
-    /*!
-     * Gets the name of the Triangle Demo
-     * 
-     * \return Name of the Triangle Demo
-     */
-    std::string TriangleDemoFactory::GetName() const
-    {
-        return "Triangle Demo";
-    }
-
-    /*!
-     * \brief Creates the TriangleDemo.
-     * 
-     * \return A new TriangleDemo
-     */
-    DemoInterface * TriangleDemoFactory::CreateDemo()
-    {
-        return new TriangleDemo();
-    }
 }

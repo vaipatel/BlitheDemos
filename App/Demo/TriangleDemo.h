@@ -32,13 +32,7 @@ namespace blithe
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
     };
 
-    class TriangleDemoFactory : public DemoFactory
-    {
-    public:
-        ~TriangleDemoFactory() override;
-        std::string GetName() const override;
-        DemoInterface* CreateDemo() override;
-    };
+    DECLARE_DEMO(TriangleDemo, "Triangle Demo");
 }
 
 #endif //TRIANGLEDEMO_H

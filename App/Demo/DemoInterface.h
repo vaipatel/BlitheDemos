@@ -30,6 +30,15 @@ namespace blithe
         virtual std::string GetName() const = 0;   //!< Gets the name of the demo
         virtual DemoInterface* CreateDemo() = 0; //!< Creates the demo
     };
+
+#define DECLARE_DEMO(DemoClass, DemoName)                               \
+    class DemoClass##Factory : public DemoFactory                       \
+    {                                                                   \
+    public:                                                             \
+        ~DemoClass##Factory() override {}                               \
+        std::string GetName() const override { return DemoName; }       \
+        DemoInterface* CreateDemo() override { return new DemoClass;}   \
+    }
 }
 
 #endif //DEMOINTERFACE_H

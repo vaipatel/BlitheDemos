@@ -602,31 +602,4 @@ namespace blithe
 
         return indices;
     }
-
-    ///
-    /// \brief Factory destructor
-    ///
-    SimpleBSPDemoFactory::~SimpleBSPDemoFactory()
-    {
-    }
-
-    ///
-    /// \brief Gets the name of the SimpleBSPDemo
-    ///
-    /// \return Name of the SimpleBSPDemo
-    ///
-    std::string SimpleBSPDemoFactory::GetName() const
-    {
-        return "Simple BSP Demo";
-    }
-
-    ///
-    /// \brief Creates the SimpleBSPDemo
-    ///
-    /// \return A new SimpleBSPDemo
-    ///
-    DemoInterface* SimpleBSPDemoFactory::CreateDemo()
-    {
-        return new SimpleBSPDemo();
-    }
 }

@@ -43,13 +43,7 @@ namespace blithe
         float m_rotationAngleRad = 0.0f; // Cumulative rotation progress in radians
     };
 
-    class InstancedCubeDemoFactory : public DemoFactory
-    {
-    public:
-        ~InstancedCubeDemoFactory() override;
-        std::string GetName() const override;
-        DemoInterface* CreateDemo() override;
-    };
+    DECLARE_DEMO(InstancedCubeDemo, "Instanced Cube Demo");
 }
 
 #endif // INSTANCEDCUBEDEMO_H
