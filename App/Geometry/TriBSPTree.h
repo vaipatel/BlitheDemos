@@ -2,6 +2,7 @@
 #define TRIBSPTREE_H
 
 #include "Tri.h"
+#include <array>
 #include <stack>
 #include <vector>
 

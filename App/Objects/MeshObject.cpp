@@ -1,8 +1,6 @@
 #include "MeshObject.h"
 #include "BlitheAssert.h"
-#include "ShaderProgram.h"
 #include <glad/glad.h>
-#include <numeric>
 
 namespace blithe
 {
@@ -59,22 +57,26 @@ namespace blithe
         glBindBuffer(GL_ARRAY_BUFFER, m_ibo);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(_transforms.size() * sizeof(glm::mat4)), _transforms.data(), GL_STATIC_DRAW);
 
-        // Adapted from learnopengl:
-        // set transformation matrices as an instance vertex attribute (with divisor 1)
-        // set attribute pointers for matrix (4 times vec4)
-        std::array<size_t, 3> numComponentsPerAttr = Vertex::GetNumComponentsPerAttribute();
-        const GLuint StartAttrIdx = numComponentsPerAttr.size();
-        for (GLuint idx = 0; idx < 4; idx++)
+        // Goal: Set transformation matrices as an instance vertex attribute (with divisor 1)
+        // The instance's matrix will be available in the next available layout location on the
+        // vertex shader (so after the texture coords for our m_format_xyz_rgba_uv format).
+        // We're going to upload the matrix as 4 vec4s. But from I understand, on the shader side we
+        // can just compactly use "out mat4 InstanceMatrix".
+        // (AFAIU, we could use 4 "out vec4 InstanceMatColN" lines consecutively where N=0,1,2,3.
+        // But that's so much typing)
+        const GLuint NumExistingAttrs = m_format_xyz_rgba_uv.m_attributes.size();
+        for (GLuint colIdx = 0; colIdx < 4; colIdx++)
         {
-            GLuint attrIdx = StartAttrIdx + idx;
+            // Upload the columns after the existing vertex attribute layout locations
+            GLuint attrIdx = NumExistingAttrs + colIdx;
             glEnableVertexAttribArray(attrIdx);
-            glVertexAttribPointer(attrIdx, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(idx * sizeof(glm::vec4)));
+            glVertexAttribPointer(attrIdx, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(colIdx * sizeof(glm::vec4)));
         }
 
         // The divisor of 1 means we only change the attribute per instance, not per vertex
-        for (GLuint idx = 0; idx < 4; idx++)
+        for (GLuint colIdx = 0; colIdx < 4; colIdx++)
         {
-            GLuint attrIdx = StartAttrIdx + idx;
+            GLuint attrIdx = NumExistingAttrs + colIdx;
             glVertexAttribDivisor(attrIdx, 1);
         }
 
@@ -119,18 +121,15 @@ namespace blithe
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_mesh.m_indices.size() * sizeof(unsigned int)), m_mesh.m_indices.data(), GL_STATIC_DRAW);
 
-        // (The vertex attrib layout below is trying to be clever and avoid describing the
-        // layout for each attribute, instead trying to be "generic". I'm not sure how
-        // worthwhile that is. Considering I have to assume they are floats anyway.)
-        std::array<size_t, 3> numComponentsPerAttr = Vertex::GetNumComponentsPerAttribute();
-        size_t totalNumComponents = std::accumulate(std::begin(numComponentsPerAttr), std::end(numComponentsPerAttr), 0ull);
-        size_t offset = 0;
-        for (GLuint attrIdx = 0; attrIdx < numComponentsPerAttr.size(); ++attrIdx)
+        for (const auto& attr : m_format_xyz_rgba_uv.m_attributes)
         {
-            GLint numComponents = static_cast<GLint>(numComponentsPerAttr[attrIdx]);
-            glEnableVertexAttribArray(attrIdx);
-            glVertexAttribPointer(attrIdx, numComponents, GL_FLOAT, GL_FALSE, static_cast<GLsizei>(totalNumComponents * sizeof(float)), reinterpret_cast<void*>(offset));
-            offset += static_cast<size_t>(numComponents) * sizeof(float);
+            glEnableVertexAttribArray(attr.m_index);
+            glVertexAttribPointer(attr.m_index,
+                                  attr.m_size,
+                                  attr.m_type,
+                                  attr.m_normalized,
+                                  m_format_xyz_rgba_uv.m_stride,
+                                  reinterpret_cast<void*>(attr.m_offset));
         }
 
         glBindVertexArray(0);

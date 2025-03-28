@@ -1,8 +1,5 @@
 #include "TrisObject.h"
-#include "ShaderProgram.h"
-
 #include <glad/glad.h>
-#include <numeric>
 
 namespace blithe
 {
@@ -22,18 +19,15 @@ namespace blithe
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(_tris.size() * sizeof(Tri)), _tris.data(), GL_STATIC_DRAW);
 
-        // (The vertex attrib layout below is trying to be clever and avoid describing the
-        // layout for each attribute, instead trying to be "generic". I'm not sure how
-        // worthwhile that is. Considering I have to assume they are floats anyway.)
-        std::array<size_t, 3> numComponentsPerAttr = Vertex::GetNumComponentsPerAttribute();
-        size_t totalNumComponents = std::accumulate(std::begin(numComponentsPerAttr), std::end(numComponentsPerAttr), 0ull);
-        size_t offset = 0;
-        for (GLuint attrIdx = 0; attrIdx < numComponentsPerAttr.size(); ++attrIdx)
+        for (const auto& attr : m_format_xyz_rgba_uv.m_attributes)
         {
-            GLint numComponents = static_cast<GLint>(numComponentsPerAttr[attrIdx]);
-            glEnableVertexAttribArray(attrIdx);
-            glVertexAttribPointer(attrIdx, numComponents, GL_FLOAT, GL_FALSE, static_cast<GLsizei>(totalNumComponents * sizeof(float)), reinterpret_cast<void*>(offset));
-            offset += static_cast<size_t>(numComponents) * sizeof(float);
+            glEnableVertexAttribArray(attr.m_index);
+            glVertexAttribPointer(attr.m_index,
+                                  attr.m_size,
+                                  attr.m_type,
+                                  attr.m_normalized,
+                                  m_format_xyz_rgba_uv.m_stride,
+                                  reinterpret_cast<void*>(attr.m_offset));
         }
 
         glBindVertexArray(0);

@@ -1,6 +1,7 @@
 #ifndef MESHOBJECT_H
 #define MESHOBJECT_H
 
+#include "VBOVertexFormat.h"
 #include "Mesh.h"
 
 namespace blithe
@@ -33,6 +34,16 @@ namespace blithe
         unsigned int m_ibo;    //!< ID of Vertex Buffer Object holding any instances data
         size_t m_numInstances; //!< Number of instances, equal to the number of transforms given for instancing
         Mesh m_mesh;           //!< The mesh geometry
+
+        ///
+        /// \brief Vertex format for the Mesh data
+        ///
+        VBOVertexFormat m_format_xyz_rgba_uv = {
+            { {0, 3, GL_FLOAT, GL_FALSE, 0},                   // position
+              {1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 3},   // color
+              {2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 7} }, // texture coords
+            sizeof(float) * 9
+        };
     };
 }
 
