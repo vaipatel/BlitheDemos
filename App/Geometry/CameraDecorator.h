@@ -13,12 +13,22 @@ namespace blithe
         RIGHT
     };
 
+    enum class enCameraDraggedMouseBtn
+    {
+        NONE,
+        LEFT,
+        RIGHT
+    };
+
     class CameraDecorator
     {
     public:
         virtual void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) = 0;
-        virtual void ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged,
-                                      float _deltaTime, bool _constrainPitch = true) = 0;
+        virtual void ProcessMouseMove(float _xOffset,
+                                      float _yOffset,
+                                      enCameraDraggedMouseBtn _draggedBtn,
+                                      float _deltaTime,
+                                      bool _constrainPitch = true) = 0;
         virtual void ProcessMouseScroll(float _scrollX, float _scrollY, float _deltaTime) = 0;
         virtual ~CameraDecorator() {}
 

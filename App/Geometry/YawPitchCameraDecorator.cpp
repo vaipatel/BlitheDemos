@@ -35,10 +35,13 @@ namespace blithe
         }
     }
 
-    void YawPitchCameraDecorator::ProcessMouseMove(float _xOffset, float _yOffset,
-                                                   bool _leftDragged, float _deltaTime,
+    void YawPitchCameraDecorator::ProcessMouseMove(float _xOffset,
+                                                   float _yOffset,
+                                                   enCameraDraggedMouseBtn _draggedBtn,
+                                                   float _deltaTime,
                                                    bool _constrainPitch/*=true*/)
     {
+        UNUSED_ARG(_draggedBtn);
         UNUSED_ARG(_deltaTime);
 
         _xOffset *= m_sensitivity;

@@ -436,8 +436,11 @@ namespace blithe
         {
             if ( _uiData.m_mouseMoved )
             {
+                enCameraDraggedMouseBtn draggedBtn = _uiData.m_leftDragged ?
+                                                         enCameraDraggedMouseBtn::LEFT :
+                                                         enCameraDraggedMouseBtn::NONE;
                 m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
-                                                    _uiData.m_leftDragged, _deltaTime, true);
+                                                    draggedBtn, _deltaTime, true);
             }
 
             if ( _uiData.m_scrolled )

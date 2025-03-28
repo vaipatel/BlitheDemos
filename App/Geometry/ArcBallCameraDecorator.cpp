@@ -38,39 +38,55 @@ namespace blithe
         }
     }
 
-    void ArcBallCameraDecorator::ProcessMouseMove(float _xOffset, float _yOffset, bool _leftDragged,
-                                                  float _deltaTime, bool _constrainPitch/*=true*/)
+    void ArcBallCameraDecorator::ProcessMouseMove(float _xOffset,
+                                                  float _yOffset,
+                                                  enCameraDraggedMouseBtn _draggedBtn,
+                                                  float _deltaTime,
+                                                  bool _constrainPitch/*=true*/)
     {
         UNUSED_ARG(_deltaTime);
         UNUSED_ARG(_constrainPitch);
 
-        if (!_leftDragged)
-            return;
+        switch( _draggedBtn )
+        {
+            case enCameraDraggedMouseBtn::NONE:
+            {
+                break;
+            }
+            case enCameraDraggedMouseBtn::LEFT:
+            {
+                _xOffset *= m_sensitivity;
+                _yOffset *= m_sensitivity;
 
-        _xOffset *= m_sensitivity;
-        _yOffset *= m_sensitivity;
+                // Use x offset to calc a rot around up, and the y offset to calc a rot around right
+                glm::quat qUp = glm::angleAxis(glm::radians(-_xOffset), m_camera.GetUp());
+                glm::quat qRight = glm::angleAxis(glm::radians(_yOffset), m_camera.GetRight());
 
-        // Use x offset to calc a rot around up, and the y offset to calc a rot around right
-        glm::quat qUp = glm::angleAxis(glm::radians(-_xOffset), m_camera.GetUp());
-        glm::quat qRight = glm::angleAxis(glm::radians(_yOffset), m_camera.GetRight());
+                // Compose the two rots to calc the overall angle and axis to rot front around
+                glm::quat orientation = qRight * qUp;
+                glm::vec3 newFront = glm::normalize(orientation * m_camera.GetFront());
 
-        // Compose the two rots to calc the overall angle and axis to rot front around
-        glm::quat orientation = qRight * qUp;
-        glm::vec3 newFront = glm::normalize(orientation * m_camera.GetFront());
+                // Rotate right around up
+                glm::vec3 newRight = glm::normalize(qUp * m_camera.GetRight());
 
-        // Rotate right around up
-        glm::vec3 newRight = glm::normalize(qUp * m_camera.GetRight());
+                //glm::vec3 expectedNewUp = glm::normalize(qRight * m_camera.GetUp());
 
-        //glm::vec3 expectedNewUp = glm::normalize(qRight * m_camera.GetUp());
+                // Update camera front and right (auto updates its up, then recalcs right to ensure
+                // orthogonality)
+                m_camera.SetFrontAndRight(newFront, newRight);
 
-        // Update camera front and right (auto updates its up, then recalcs right to ensure
-        // orthogonality)
-        m_camera.SetFrontAndRight(newFront, newRight);
+                //std::cout << abs(glm::dot(expectedNewUp, m_camera.GetUp())) << std::endl; // expect 1
 
-        //std::cout << abs(glm::dot(expectedNewUp, m_camera.GetUp())) << std::endl; // expect 1
+                // Position camera
+                UpdateCameraPosition();
 
-        // Position camera
-        UpdateCameraPosition();
+                break;
+            }
+            case enCameraDraggedMouseBtn::RIGHT:
+            {
+                break;
+            }
+        }
     }
 
     void ArcBallCameraDecorator::ProcessMouseScroll(float _scrollX, float _scrollY, float _deltaTime)
