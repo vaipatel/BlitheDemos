@@ -124,6 +124,8 @@ namespace blithe
                     glm::vec4 clearColor = m_standardViewPortTarget->GetClearColor();
                     ImVec4 clearCol(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
                     uiData.m_clearColor = clearCol;
+                    uiData.m_viewportWidth = textureWidth;
+                    uiData.m_viewPortHeight = textureHeight;
                     uiData.m_aspect = aspect;
                 }
             }

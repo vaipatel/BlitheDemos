@@ -202,6 +202,8 @@ int main(int, char**)
 
             uiData.m_clearColor = clear_color;
             uiData.m_aspect = aspectRatio;
+            uiData.m_viewportWidth = display_w;
+            uiData.m_viewPortHeight = display_h;
 
             app.RenderSelectedDemo(uiData);
         }

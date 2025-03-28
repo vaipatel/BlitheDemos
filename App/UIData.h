@@ -30,6 +30,8 @@ namespace blithe
         float m_yOffset = FLT_MIN;
         float m_scrollX = FLT_MIN;
         float m_scrollY = FLT_MIN;
+        int m_viewportWidth = 0;
+        int m_viewPortHeight = 0;
         float m_aspect = FLT_MIN;   //!< The main viewport aspect ratio
         ImVec4 m_clearColor;        //!< The main clear color
         std::unordered_set<enPressedKey> m_pressedKeys; //!< The pressed keys, per glfw
