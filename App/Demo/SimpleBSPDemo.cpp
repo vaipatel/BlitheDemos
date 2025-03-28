@@ -37,6 +37,7 @@ namespace blithe
         delete m_cameraDecorator;
         delete m_bspTree;
         delete m_torus;
+        delete m_cubes;
     }
 
     void SimpleBSPDemo::OnInit()
@@ -85,12 +86,13 @@ namespace blithe
         // traversing/view to mitigate crappy UX due to disappearing/missing triangles.
         if ( m_traversing || (m_maxDbgTrisPerRenderLoop > 0 && m_maxDbgTrisPerRenderLoop < m_bspNumTris) )
         {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            m_cubes->Render();
             if ( m_torus )
             {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 m_torus->Render();
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
         size_t activeUnitOffset = 0;
@@ -192,6 +194,10 @@ namespace blithe
             Mesh mesh = GeomHelpers::CreateCuboid(sides, chosenColorVec, modelTransforms[i]);
             m_cubeMeshes.push_back(mesh);
         }
+
+        Mesh mesh = GeomHelpers::CreateCuboid(sides, colors);
+        m_cubes = new MeshObject(mesh);
+        m_cubes->SetInstances(modelTransforms);
     }
 
     ///

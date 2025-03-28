@@ -53,6 +53,7 @@ namespace blithe
         ShaderProgram* m_shader = nullptr; //!< Simple triangle shader to use for all the triangles
         Texture* m_texture = nullptr;      //!< Simple texture to use for all the object "faces"
         std::vector<Mesh> m_cubeMeshes;    //!< List of meshes for the central cubes
+        MeshObject* m_cubes = nullptr;     //!< Cube objects for central cubes (we make a renderable object so we can wireframe it)
         MeshObject* m_torus = nullptr;     //!< Torus mesh object (we make a renderable object so we can wireframe it)
 
         TriBSPTree* m_bspTree = nullptr; //!< BSP Tree. All mesh tris are added to it on Setup. It is traversed in the Render loop.
