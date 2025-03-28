@@ -33,6 +33,14 @@ namespace blithe
             m_distance += speed;
             UpdateCameraPosition();
             break;
+        case enCameraMovement::LEFT:
+            m_target -= m_camera.GetRight() * speed;
+            UpdateCameraPosition();
+            break;
+        case enCameraMovement::RIGHT:
+            m_target += m_camera.GetRight() * speed;
+            UpdateCameraPosition();
+            break;
         default:
             break;
         }
