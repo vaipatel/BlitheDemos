@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include <glm/glm.hpp>
+#include <map>
 #include "UIData.h"
 
 class BlitheDemosEvents
@@ -16,6 +17,9 @@ public:
     static void ResetUIDataPerFrame();
 
     static blithe::UIData s_uiData;
+
+private:
+    static std::map<int, blithe::enMouseButton> s_glfwToBlitheMouseBtns;
 };
 
 #endif // BLITHEDEMOSEVENTS_H

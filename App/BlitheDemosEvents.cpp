@@ -2,6 +2,13 @@
 
 blithe::UIData BlitheDemosEvents::s_uiData;
 
+std::map<int, blithe::enMouseButton> BlitheDemosEvents::s_glfwToBlitheMouseBtns
+{
+    { GLFW_MOUSE_BUTTON_LEFT, blithe::enMouseButton::Left },
+    { GLFW_MOUSE_BUTTON_RIGHT, blithe::enMouseButton::Right },
+    { GLFW_MOUSE_BUTTON_MIDDLE, blithe::enMouseButton::Middle }
+};
+
 // (stolen/adapted from learnopengl)
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -62,12 +69,10 @@ void BlitheDemosEvents::MouseButtonCallback(GLFWwindow* _window, int _button, in
     glfwGetCursorPos(_window, &xpos, &ypos);
     glm::vec2 pos(xpos, ypos);
 
-    bool btnKnown = _button == GLFW_MOUSE_BUTTON_LEFT
-                    || _button == GLFW_MOUSE_BUTTON_RIGHT
-                    || _button == GLFW_MOUSE_BUTTON_MIDDLE;
+    bool btnKnown = s_glfwToBlitheMouseBtns.count(_button) == 1;
     if ( btnKnown )
     {
-        blithe::enMouseButton btn = static_cast<blithe::enMouseButton>(_button);
+        blithe::enMouseButton btn = s_glfwToBlitheMouseBtns[_button];
         if (_action == GLFW_PRESS)
         {
             s_uiData.m_mouseInput.BeginDrag(btn, pos);
