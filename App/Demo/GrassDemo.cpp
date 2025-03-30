@@ -159,13 +159,20 @@ namespace blithe
 
     void GrassDemo::ProcessMouseMove(const UIData& _uiData, float _deltaTime)
     {
-        if ( _uiData.m_mouseMoved && !_uiData.m_guiCaptured )
+        if ( !_uiData.m_guiCaptured )
         {
-            enCameraDraggedMouseBtn draggedBtn = _uiData.m_leftDragged ?
-                                                     enCameraDraggedMouseBtn::LEFT :
-                                                     enCameraDraggedMouseBtn::NONE;
-            m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
-                                                draggedBtn, _deltaTime, true);
+            const MouseInputState& mouseInput = _uiData.m_mouseInput;
+            if ( mouseInput.m_mouseMoved )
+            {
+                bool leftDragged = mouseInput.GetDragInfo(enMouseButton::Left).m_dragging;
+                enCameraDraggedMouseBtn draggedBtn = leftDragged ?
+                    enCameraDraggedMouseBtn::LEFT : enCameraDraggedMouseBtn::NONE;
+                m_cameraDecorator->ProcessMouseMove(mouseInput.m_mouseDelta.x,
+                                                    mouseInput.m_mouseDelta.y,
+                                                    draggedBtn,
+                                                    _deltaTime,
+                                                    true);
+            }
         }
     }
 

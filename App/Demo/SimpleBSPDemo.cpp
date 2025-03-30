@@ -440,18 +440,23 @@ namespace blithe
     {
         if ( !_uiData.m_guiCaptured )
         {
-            if ( _uiData.m_mouseMoved )
+            const MouseInputState& mouseInput = _uiData.m_mouseInput;
+            if ( mouseInput.m_mouseMoved )
             {
-                enCameraDraggedMouseBtn draggedBtn = _uiData.m_leftDragged ?
-                                                         enCameraDraggedMouseBtn::LEFT :
-                                                         enCameraDraggedMouseBtn::NONE;
-                m_cameraDecorator->ProcessMouseMove(_uiData.m_xOffset, _uiData.m_yOffset,
-                                                    draggedBtn, _deltaTime, true);
+                bool leftDragged = mouseInput.GetDragInfo(enMouseButton::Left).m_dragging;
+                enCameraDraggedMouseBtn draggedBtn = leftDragged ?
+                    enCameraDraggedMouseBtn::LEFT : enCameraDraggedMouseBtn::NONE;
+                m_cameraDecorator->ProcessMouseMove(mouseInput.m_mouseDelta.x,
+                                                    mouseInput.m_mouseDelta.y,
+                                                    draggedBtn,
+                                                    _deltaTime,
+                                                    true);
             }
 
-            if ( _uiData.m_scrolled )
+            if ( mouseInput.m_scrolled )
             {
-                m_cameraDecorator->ProcessMouseScroll(_uiData.m_scrollX, _uiData.m_scrollY,
+                m_cameraDecorator->ProcessMouseScroll(mouseInput.m_scroll.m_xoffset,
+                                                      mouseInput.m_scroll.m_yoffset,
                                                       _deltaTime);
             }
         }

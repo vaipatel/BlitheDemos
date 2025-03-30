@@ -19,6 +19,7 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "BlitheDemosApp.h"
+#include "BlitheDemosEvents.h"
 #include "BlitheDemoFactories.h"
 #include "UIData.h"
 
@@ -42,24 +43,6 @@ static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
-
-void ProcessInput(GLFWwindow *window);
-
-void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos);
-void ScrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset);
-
-struct MouseCallbackData
-{
-    bool m_firstMouse = true;
-    bool m_pressed = false;
-    bool m_released = false;
-    bool m_dragged = false;
-    float m_lastX = 0.0f;
-    float m_lastY = 0.0f;
-};
-static MouseCallbackData mouseCbkData;
-
-static blithe::UIData uiData;
 
 // Main code
 int main(int, char**)
@@ -98,8 +81,9 @@ int main(int, char**)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
-    glfwSetCursorPosCallback(window, MouseCallback);
-    glfwSetScrollCallback(window, ScrollCallback);
+    glfwSetMouseButtonCallback(window, BlitheDemosEvents::MouseButtonCallback);
+    glfwSetCursorPosCallback(window, BlitheDemosEvents::CursorPosCallback);
+    glfwSetScrollCallback(window, BlitheDemosEvents::ScrollCallback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -167,7 +151,7 @@ int main(int, char**)
     {
         ZoneScoped;
 
-        uiData = blithe::UIData();
+        BlitheDemosEvents::ResetUIDataPerFrame();
 
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -176,7 +160,7 @@ int main(int, char**)
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
 
-        ProcessInput(window);
+        BlitheDemosEvents::ProcessInput(window);
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -184,7 +168,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         // ImGui windows
-        app.DrawUI(uiData);
+        app.DrawUI(BlitheDemosEvents::s_uiData);
 
         // Rendering
         ImGui::Render();
@@ -200,12 +184,12 @@ int main(int, char**)
             // Recalculate the aspect ratio
             float aspectRatio = display_w / static_cast<float>(display_h);
 
-            uiData.m_clearColor = clear_color;
-            uiData.m_aspect = aspectRatio;
-            uiData.m_viewportWidth = display_w;
-            uiData.m_viewPortHeight = display_h;
+            BlitheDemosEvents::s_uiData.m_clearColor = clear_color;
+            BlitheDemosEvents::s_uiData.m_aspect = aspectRatio;
+            BlitheDemosEvents::s_uiData.m_viewportWidth = display_w;
+            BlitheDemosEvents::s_uiData.m_viewPortHeight = display_h;
 
-            app.RenderSelectedDemo(uiData);
+            app.RenderSelectedDemo(BlitheDemosEvents::s_uiData);
         }
 
         // Render ImGui over OpenGL stuff
@@ -227,102 +211,3 @@ int main(int, char**)
     
     return 0;
 }
-
-// (stolen/adapted from learnopengl)
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void ProcessInput(GLFWwindow *window)
-{
-    std::unordered_set<blithe::enPressedKey>& pressedKeys = uiData.m_pressedKeys;
-    pressedKeys.clear();
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        pressedKeys.insert(blithe::enPressedKey::KEY_ESCAPE);
-        glfwSetWindowShouldClose(window, true);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        pressedKeys.insert(blithe::enPressedKey::KEY_W);
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        pressedKeys.insert(blithe::enPressedKey::KEY_S);
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        pressedKeys.insert(blithe::enPressedKey::KEY_A);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        pressedKeys.insert(blithe::enPressedKey::KEY_D);
-    }
-}
-
-// (stolen/adapted from learnopengl)
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void MouseCallback(GLFWwindow* _window, double _xpos, double _ypos)
-{
-    ImGuiIO& io = ImGui::GetIO();
-    io.AddMousePosEvent(_xpos, _ypos);
-
-    float xpos = static_cast<float>(_xpos);
-    float ypos = static_cast<float>(_ypos);
-
-    if ( mouseCbkData.m_firstMouse )
-    {
-        mouseCbkData.m_lastX = xpos;
-        mouseCbkData.m_lastY = ypos;
-        mouseCbkData.m_firstMouse = false;
-    }
-
-    if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-    {
-        mouseCbkData.m_released = true;
-        mouseCbkData.m_pressed = false;
-        mouseCbkData.m_dragged = false;
-    }
-    else if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        if ( mouseCbkData.m_pressed )
-        {
-            mouseCbkData.m_dragged = true;
-        }
-        mouseCbkData.m_pressed = true;
-        mouseCbkData.m_released = false;
-    }
-
-    float xoffset = xpos - mouseCbkData.m_lastX;
-    float yoffset = mouseCbkData.m_lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    mouseCbkData.m_lastX = xpos;
-    mouseCbkData.m_lastY = ypos;
-
-    // Populate uiData
-    uiData.m_guiCaptured = io.WantCaptureMouse;
-    uiData.m_mouseMoved = true;
-    uiData.m_leftDragged = mouseCbkData.m_dragged;
-    uiData.m_xPos = xpos;
-    uiData.m_yPos = ypos;
-    uiData.m_xOffset = xoffset;
-    uiData.m_yOffset = yoffset;
-
-    //static uint64_t s_mousePrintIdx = 0;
-    //std::cout << "Mouse event: " << " print idx = " << s_mousePrintIdx++ << ", xoffset = " << xoffset << ", yoffset = " << yoffset << ", leftDragged = " << uiData.m_leftDragged << std::endl;
-}
-
-void ScrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset)
-{
-    ImGuiIO& io = ImGui::GetIO();
-    io.AddMouseWheelEvent(_xoffset, _yoffset);
-
-    float xOffset = static_cast<float>(_xoffset);
-    float yOffset = static_cast<float>(_yoffset);
-
-    uiData.m_scrolled = true;
-    uiData.m_scrollX = xOffset;
-    uiData.m_scrollY = yOffset;
-}
-
