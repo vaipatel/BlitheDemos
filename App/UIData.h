@@ -2,34 +2,14 @@
 #define UIDATA_H
 
 #include "imgui.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include <glm/glm.hpp>
-#include <array>
 #include <unordered_set>
+#include <vector>
+#include "BlitheAssert.h"
+#include "KeyMouseEnums.h"
 
 namespace blithe
 {
-    enum class enPressedKey : int
-    {
-        KEY_W,
-        KEY_A,
-        KEY_S,
-        KEY_D,
-        KEY_ESCAPE
-    };
-
-    ///
-    /// \brief Supported mouse buttons for drag tracking
-    ///
-    enum class enMouseButton : int
-    {
-        Left   = GLFW_MOUSE_BUTTON_LEFT,
-        Middle = GLFW_MOUSE_BUTTON_MIDDLE,
-        Right  = GLFW_MOUSE_BUTTON_RIGHT,
-        COUNT
-    };
-
     ///
     /// \brief Tracks drag state for a single mouse button
     ///
@@ -65,7 +45,7 @@ namespace blithe
     struct MouseInputState
     {
         //! Per-button drag tracking (left, middle, right)
-        std::array<MouseButtonDragInfo, static_cast<int>(enMouseButton::COUNT)> m_perBtnDragInfos;
+        std::array<MouseButtonDragInfo, enMouseButtonVec.size()> m_perBtnDragInfos;
 
         //! Scroll state for this frame
         MouseScrollState m_scroll;
@@ -93,6 +73,33 @@ namespace blithe
         const MouseButtonDragInfo& GetDragInfo(enMouseButton _btn) const
         {
             return m_perBtnDragInfos[static_cast<int>(_btn)];
+        }
+
+        ///
+        /// \brief Retrieves drag info for a specific mouse button. Non-const version of GetDragInfo().
+        /// \param _btn - The mouse button
+        /// \return Non-const reference to the corresponding ButtonDragInfo
+        ///
+        MouseButtonDragInfo& GetModifiableDragInfo(enMouseButton _btn)
+        {
+            return m_perBtnDragInfos[static_cast<int>(_btn)];
+        }
+
+        ///
+        /// \brief Retrieves all mouse buttons that are being dragged this frame.
+        /// \return All dragged buttons
+        ///
+        std::vector<enMouseButton> GetDraggedButtons() const
+        {
+            std::vector<enMouseButton> draggedBtns;
+            for ( enMouseButton btn : enMouseButtonVec )
+            {
+                if ( GetDragInfo(btn).m_dragging )
+                {
+                    draggedBtns.push_back(btn);
+                }
+            }
+            return draggedBtns;
         }
 
         ///
@@ -132,14 +139,13 @@ namespace blithe
             m_mousePos = _pos;
             m_mouseMoved = true;
 
-            for (int i = 0; i < static_cast<int>(enMouseButton::COUNT); ++i)
+            const std::vector<enMouseButton>& draggedBtns = GetDraggedButtons();
+            for ( enMouseButton draggedBtn : draggedBtns )
             {
-                MouseButtonDragInfo& info = m_perBtnDragInfos[i];
-                if (info.m_dragging)
-                {
-                    info.m_delta = _pos - info.m_lastPos;
-                    info.m_lastPos = _pos;
-                }
+                MouseButtonDragInfo& info = GetModifiableDragInfo(draggedBtn);
+                ASSERT(info.m_dragging, "GetDraggedButtons() reporting incorrect buttons");
+                info.m_delta = _pos - info.m_lastPos;
+                info.m_lastPos = _pos;
             }
         }
 

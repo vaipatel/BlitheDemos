@@ -37,11 +37,11 @@ namespace blithe
 
     void YawPitchCameraDecorator::ProcessMouseMove(float _xOffset,
                                                    float _yOffset,
-                                                   enCameraDraggedMouseBtn _draggedBtn,
+                                                   const std::vector<enMouseButton>& _draggedBtns,
                                                    float _deltaTime,
                                                    bool _constrainPitch/*=true*/)
     {
-        UNUSED_ARG(_draggedBtn);
+        UNUSED_ARG(_draggedBtns);
         UNUSED_ARG(_deltaTime);
 
         _xOffset *= m_sensitivity;

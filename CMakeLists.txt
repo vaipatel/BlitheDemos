@@ -110,6 +110,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosApp.h
     ${PROJECT_SOURCE_DIR}/App/BlitheDemosEvents.h
     ${PROJECT_SOURCE_DIR}/App/BlitheDemoFactories.h
+    ${PROJECT_SOURCE_DIR}/App/KeyMouseEnums.h
     ${PROJECT_SOURCE_DIR}/App/UIData.h
     ${PROJECT_SOURCE_DIR}/App/Caches/GLBufferCache.h
     ${PROJECT_SOURCE_DIR}/App/Caches/IGLBufferCache.h

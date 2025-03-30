@@ -1,7 +1,9 @@
 #ifndef CAMERADECORATOR_H
 #define CAMERADECORATOR_H
 
+#include <vector>
 #include "Camera.h"
+#include "KeyMouseEnums.h"
 
 namespace blithe
 {
@@ -26,7 +28,7 @@ namespace blithe
         virtual void ProcessKeyboard(enCameraMovement _movement, float _deltaTime) = 0;
         virtual void ProcessMouseMove(float _xOffset,
                                       float _yOffset,
-                                      enCameraDraggedMouseBtn _draggedBtn,
+                                      const std::vector<enMouseButton>& _draggedBtns,
                                       float _deltaTime,
                                       bool _constrainPitch = true) = 0;
         virtual void ProcessMouseScroll(float _scrollX, float _scrollY, float _deltaTime) = 0;

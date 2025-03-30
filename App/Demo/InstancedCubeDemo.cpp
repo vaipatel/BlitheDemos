@@ -156,12 +156,9 @@ namespace blithe
             const MouseInputState& mouseInput = _uiData.m_mouseInput;
             if ( mouseInput.m_mouseMoved )
             {
-                bool leftDragged = mouseInput.GetDragInfo(enMouseButton::Left).m_dragging;
-                enCameraDraggedMouseBtn draggedBtn = leftDragged ?
-                    enCameraDraggedMouseBtn::LEFT : enCameraDraggedMouseBtn::NONE;
                 m_cameraDecorator->ProcessMouseMove(mouseInput.m_mouseDelta.x,
                                                     mouseInput.m_mouseDelta.y,
-                                                    draggedBtn,
+                                                    mouseInput.GetDraggedButtons(),
                                                     _deltaTime,
                                                     true);
             }
