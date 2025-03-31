@@ -96,6 +96,8 @@ set(BLITHE_DEMOS_SOURCES
     ${PROJECT_SOURCE_DIR}/App/Geometry/YawPitchCameraDecorator.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/GeomHelpers.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/MeshView.cpp
+    ${PROJECT_SOURCE_DIR}/App/Geometry/RayAABBIntersecter.cpp
+    ${PROJECT_SOURCE_DIR}/App/Geometry/RayMeshPicker.cpp
     ${PROJECT_SOURCE_DIR}/App/Geometry/TriBSPTree.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/RenderTarget.cpp
     ${PROJECT_SOURCE_DIR}/App/GLWrappers/ShaderProgram.cpp
@@ -120,6 +122,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Demo/InstancedCubeDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/SimpleBSPDemo.h
     ${PROJECT_SOURCE_DIR}/App/Demo/TriangleDemo.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/AABB.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/ArcBallCameraDecorator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Camera.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/CameraDecorator.h
@@ -128,6 +131,8 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/MeshIterator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/MeshView.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/RayAABBIntersecter.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/RayMeshPicker.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/TriBSPTree.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Vertex.h

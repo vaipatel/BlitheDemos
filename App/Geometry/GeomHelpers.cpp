@@ -26,6 +26,113 @@ namespace blithe
     }
 
     ///
+    //// \brief Computes the local-space AABB of a mesh based on its untransformed vertices
+    ///
+    /// \param _mesh - The mesh whose local AABB is to be computed
+    ///
+    /// \return AABB enclosing all vertices in the mesh's local coordinate system
+    ///
+    AABB GeomHelpers::CalcLocalAABB(const Mesh& _mesh)
+    {
+        AABB aabb;
+
+        if ( _mesh.m_vertices.empty() )
+        {
+            aabb.m_min = glm::vec3(0);
+            aabb.m_max = glm::vec3(0);
+        }
+        else
+        {
+            aabb.m_min = _mesh.m_vertices[0].m_pos;
+            aabb.m_max = _mesh.m_vertices[0].m_pos;
+            for ( size_t i = 0; i < _mesh.m_vertices.size(); i++ )
+            {
+                const auto& p = _mesh.m_vertices[i].m_pos;
+                aabb.m_min = glm::min(aabb.m_min, p);
+                aabb.m_max = glm::max(aabb.m_max, p);
+            }
+        }
+
+        return aabb;
+    }
+
+    ///
+    //// \brief Computes the world-space AABB of a mesh by transforming each vertex by the model matrix.
+    ///
+    /// \param _mesh     - The mesh whose world-space AABB is to be computed
+    /// \param _modelMat - The model matrix used to transform local vertices to world space
+    ///
+    /// \return AABB enclosing the transformed vertices in world space
+    ///
+    AABB GeomHelpers::CalcWorldAABB(const Mesh& _mesh, const glm::mat4& _modelMat)
+    {
+        AABB aabb;
+
+        if ( _mesh.m_vertices.empty() )
+        {
+            aabb.m_min = glm::vec3(0);
+            aabb.m_max = glm::vec3(0);
+        }
+        else
+        {
+            aabb.m_min = _modelMat * glm::vec4(_mesh.m_vertices[0].m_pos, 1.0);
+            aabb.m_max = _modelMat * glm::vec4(_mesh.m_vertices[0].m_pos, 1.0);
+            for ( size_t i = 0; i < _mesh.m_vertices.size(); i++ )
+            {
+                glm::vec3 p = _modelMat * glm::vec4(_mesh.m_vertices[i].m_pos, 1.0);
+                aabb.m_min = glm::min(aabb.m_min, p);
+                aabb.m_max = glm::max(aabb.m_max, p);
+            }
+        }
+
+        return aabb;
+    }
+
+    ///
+    //// \brief Transforms an AABB by applying a matrix to all 8 corners and recomputing the
+    ///         bounding box.
+    ///
+    ///         This can be used to somewhat inexactly but quickly update the AABB for a mesh. It is
+    ///         inexact because the AABB enclosing the generally non-world-aligned local AABB will
+    ///         possibly not be the tightest bound, but it avoids needing to visit and transform
+    ///         every vertex.
+    ///
+    /// \param _aabb - The original AABB to transform
+    /// \param _mat  - The transformation matrix to apply
+    ///
+    /// \return New AABB that tightly fits the transformed corners
+    ///
+    AABB GeomHelpers::TransformAABB(const AABB& _aabb, const glm::mat4& _mat)
+    {
+        AABB result;
+
+        glm::vec3 corners[8] =
+        {
+            glm::vec3(_aabb.m_min.x, _aabb.m_min.y, _aabb.m_min.z),
+            glm::vec3(_aabb.m_max.x, _aabb.m_min.y, _aabb.m_min.z),
+            glm::vec3(_aabb.m_min.x, _aabb.m_max.y, _aabb.m_min.z),
+            glm::vec3(_aabb.m_max.x, _aabb.m_max.y, _aabb.m_min.z),
+            glm::vec3(_aabb.m_min.x, _aabb.m_min.y, _aabb.m_max.z),
+            glm::vec3(_aabb.m_max.x, _aabb.m_min.y, _aabb.m_max.z),
+            glm::vec3(_aabb.m_min.x, _aabb.m_max.y, _aabb.m_max.z),
+            glm::vec3(_aabb.m_max.x, _aabb.m_max.y, _aabb.m_max.z)
+        };
+
+        glm::vec3 transformedCorner = glm::vec3(_mat * glm::vec4(corners[0], 1.0f));
+        result.m_min = transformedCorner;
+        result.m_max = transformedCorner;
+
+        for (int i = 1; i < 8; ++i)
+        {
+            transformedCorner = glm::vec3(_mat * glm::vec4(corners[i], 1.0f));
+            result.m_min = glm::min(result.m_min, transformedCorner);
+            result.m_max = glm::max(result.m_max, transformedCorner);
+        }
+
+        return result;
+    }
+
+    ///
     /// \brief Creates a cuboid mesh with _sides expressing the width x height x depth, and 8
     ///        _colors for each of the vertices.
     ///
