@@ -50,16 +50,20 @@ void BlitheDemosEvents::CursorPosCallback(GLFWwindow* _window, double _xpos, dou
     io.AddMousePosEvent(_xpos, _ypos);
 
     blithe::MouseInputState& mouseInput = s_uiData.m_mouseInput;
-    mouseInput.UpdateCursorPosition({_xpos, _ypos});
+    float xPosRelativeToViewPort = _xpos - s_uiData.m_viewPortTopLeftX;
+    float yPosRelativeToViewPort = _ypos - s_uiData.m_viewPortTopLeftY;
+    mouseInput.UpdateCursorPosition({xPosRelativeToViewPort, yPosRelativeToViewPort});
 
     // Populate uiData
     s_uiData.m_guiCaptured = io.WantCaptureMouse;
 
     // static uint64_t s_mousePrintIdx = 0;
     // std::cout << "Mouse event: " << " print idx = " << s_mousePrintIdx++
+    //           << ", xpos = " << mouseInput.m_mousePos.x
+    //           << ", ypos = " << mouseInput.m_mousePos.y
     //           << ", xoffset = " << mouseInput.m_mouseDelta.x
     //           << ", yoffset = " << mouseInput.m_mouseDelta.y
-    //           << ", leftDragged = " << mouseInput.Get(blithe::enMouseButton::Left).m_dragging
+    //           << ", leftDragged = " << mouseInput.GetDragInfo(blithe::enMouseButton::Left).m_dragging
     //           << std::endl;
 }
 

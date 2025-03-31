@@ -188,6 +188,10 @@ namespace blithe
                 ImVec2 viewportSize = ImGui::GetContentRegionAvail();
                 ResizeDefaultViewPortTargetIfNeeded(viewportSize);
 
+                ImVec2 imagePos = ImGui::GetCursorScreenPos(); // top-left corner of Image()
+                _uiData.m_viewPortTopLeftX = imagePos.x;
+                _uiData.m_viewPortTopLeftY = imagePos.y;
+
                 if (m_standardViewPortTarget)
                 {
                     // Convert GLuint to ImTextureID (a.k.a. void*) for ImGui

@@ -183,6 +183,8 @@ namespace blithe
     struct UIData
     {
         bool m_guiCaptured = false;
+        float m_viewPortTopLeftX = 0.0f;
+        float m_viewPortTopLeftY = 0.0f;
         int m_viewportWidth = 0;
         int m_viewPortHeight = 0;
         float m_aspect = FLT_MIN;   //!< The main viewport aspect ratio
