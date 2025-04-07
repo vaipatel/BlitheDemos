@@ -39,8 +39,8 @@ namespace blithe
     ///
     tl::optional<RayMeshPicker::Result> RayMeshPicker::PickSingleMeshAABB(
             glm::vec2 _mousePos,
-            const std::vector<Mesh>& _meshes,
-            const std::vector<glm::mat4>& _modelMats)
+            const std::vector<const Mesh*>& _meshes,
+            const std::vector<glm::mat4*>& _modelMats)
     {
         ASSERT(m_viewPortWidth > 0 && m_viewPortHeight > 0, "RayMeshPicker not setup correctly");
         ASSERT(_meshes.size() == _modelMats.size(), "There should be one model matrix per mesh");
@@ -62,32 +62,38 @@ namespace blithe
         rayEndWorld   /= rayEndWorld.w;
         glm::vec3 rayOrigin = glm::vec3(rayStartWorld);
         glm::vec3 rayDir = glm::normalize(glm::vec3(rayEndWorld - rayStartWorld));
+        Ray ray { rayOrigin, rayDir };
         //std::cout << "Ray dir: " << rayDir.x << ", " << rayDir.y << ", " << rayDir.z << std::endl;
 
-        std::vector<float> tnears;
-        std::vector<RayIntersectionResult> intersectionResults;
+        std::vector<float> candidateTNears;
+        std::vector<size_t> candidateIndices;
+        std::vector<RayIntersectionResult> candidateIntersectionResults;
         for ( size_t i = 0; i < _meshes.size(); i++ )
         {
-            const Mesh& mesh = _meshes[i];
+            const Mesh& mesh = *_meshes[i];
             AABB localAABB = GeomHelpers::CalcLocalAABB(mesh);
-            AABB worldAABB = GeomHelpers::TransformAABB(localAABB, _modelMats[i]);
-            tl::optional<RayIntersectionResult> intersection = RayAABBIntersecter::Intersect(
-                                                                   rayOrigin,
-                                                                   rayDir,
-                                                                   worldAABB);
+            const glm::mat4& modelMat = *_modelMats[i];
+            AABB worldAABB = GeomHelpers::TransformAABB(localAABB, modelMat);
+            tl::optional<RayIntersectionResult> intersection =
+                    RayAABBIntersecter::Intersect(ray, worldAABB);
             if ( intersection.has_value() )
             {
-                tnears.push_back(intersection->m_tClose);
-                intersectionResults.push_back(intersection.value());
+                candidateTNears.push_back(intersection->m_tClose);
+                candidateIndices.push_back(i);
+                candidateIntersectionResults.push_back(intersection.value());
             }
         }
 
-        if ( !tnears.empty() )
+        if ( !candidateTNears.empty() )
         {
-            std::vector<float>::iterator minIt = std::min_element(tnears.begin(), tnears.end());
             Result r;
-            r.m_idx = std::distance(tnears.begin(), minIt);
-            r.m_entryPt = intersectionResults[r.m_idx].m_entryPt;
+            std::vector<float>::iterator minIt = std::min_element(candidateTNears.begin(),
+                                                                  candidateTNears.end());
+            int minTNearsIdx = std::distance(candidateTNears.begin(), minIt);
+            r.m_entryPt = candidateIntersectionResults[minTNearsIdx].m_entryPt;
+            r.m_tClose = candidateTNears[minTNearsIdx];
+            r.m_idx = candidateIndices[minTNearsIdx];
+            r.m_ray = ray;
             result = r;
         }
 

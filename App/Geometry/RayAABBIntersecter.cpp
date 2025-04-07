@@ -1,23 +1,21 @@
 #include "RayAABBIntersecter.h"
 #include "AABB.h"
-#include <iostream>
+// #include <iostream>
 
 namespace blithe
 {
 
     ///
     /// \brief Uses the Slab method (https://en.wikipedia.org/wiki/Slab_method) for intersecting the
-    ///        ray defined by _rayOrigin and _rayDir with the given _aabb
+    ///        ray _ray with the given AABB _aabb
     ///
-    /// \param _rayOrigin - Origin of the ray
-    /// \param _rayDir    - Normalized direction of the ray
-    /// \param _aabb      - AABB to intersect with
+    /// \param _ray  - Ray (Origin + Normalized direction)
+    /// \param _aabb - AABB to intersect with
     ///
     /// \return Optional RayIntersectionResult if the ray intersects the AABB
     ///
     tl::optional<RayIntersectionResult> RayAABBIntersecter::Intersect(
-            const glm::vec3& _rayOrigin,
-            const glm::vec3& _rayDir,
+            const Ray& _ray,
             const AABB& _aabb)
     {
         tl::optional<RayIntersectionResult> result;
@@ -27,12 +25,12 @@ namespace blithe
         bool intersects = true;
         for ( int i = 0; i < 3; i++ )
         {
-            // Check if ray is parallel to the ith slab by checking ray dir's ith component.
-            // (Example: if rayDir were locked in the yz plane, rayDir's x component would be 0.)
-            if ( std::abs(_rayDir[i]) < 1e-8f )
+            // Check if ray is parallel to the ith slab by checking dir's ith component.
+            // (Example: if dir were locked in the yz plane, dir's x component would be 0.)
+            if ( std::abs(_ray.m_dir[i]) < 1e-8f )
             {
                 // The ray is parallel to the ith slab. Check if origin's ith coord is inside.
-                if (_rayOrigin[i] < _aabb.m_min[i] || _rayOrigin[i] > _aabb.m_max[i])
+                if (_ray.m_origin[i] < _aabb.m_min[i] || _ray.m_origin[i] > _aabb.m_max[i])
                 {
                     // So the ray is completely outside the box
                     intersects = false;
@@ -41,8 +39,8 @@ namespace blithe
             }
             else
             {
-                float tmin_i = (_aabb.m_min[i] - _rayOrigin[i]) / _rayDir[i];
-                float tmax_i = (_aabb.m_max[i] - _rayOrigin[i]) / _rayDir[i];
+                float tmin_i = (_aabb.m_min[i] - _ray.m_origin[i]) / _ray.m_dir[i];
+                float tmax_i = (_aabb.m_max[i] - _ray.m_origin[i]) / _ray.m_dir[i];
 
                 float tnear_i = std::fminf(tmin_i, tmax_i);
                 float tfar_i = std::fmaxf(tmin_i, tmax_i);
@@ -60,8 +58,8 @@ namespace blithe
 
         if ( intersects )
         {
-            glm::vec3 entryPt = _rayOrigin + tnear * _rayDir;
-            glm::vec3 exitPt = _rayOrigin + tfar * _rayDir;
+            glm::vec3 entryPt = _ray.m_origin + tnear * _ray.m_dir;
+            glm::vec3 exitPt = _ray.m_origin + tfar * _ray.m_dir;
             result = {entryPt, exitPt, tnear, tfar};
         }
 

@@ -131,6 +131,7 @@ set(BLITHE_DEMOS_HEADERS
     ${PROJECT_SOURCE_DIR}/App/Geometry/Mesh.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/MeshIterator.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/MeshView.h
+    ${PROJECT_SOURCE_DIR}/App/Geometry/Ray.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/RayAABBIntersecter.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/RayMeshPicker.h
     ${PROJECT_SOURCE_DIR}/App/Geometry/Tri.h

@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <optional.hpp>
+#include "Ray.h"
 
 namespace blithe
 {
@@ -25,9 +26,7 @@ namespace blithe
     class RayAABBIntersecter
     {
     public:
-        static tl::optional<RayIntersectionResult> Intersect(const glm::vec3& _rayOrigin,
-                                                             const glm::vec3& _rayDir,
-                                                             const AABB& _aabb);
+        static tl::optional<RayIntersectionResult> Intersect(const Ray& _ray, const AABB& _aabb);
     };
 }
 
