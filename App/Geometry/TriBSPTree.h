@@ -36,7 +36,8 @@ namespace blithe
 
         static void CountTotalNumTris(TriBSPTree* _root, size_t& _outNumTris);
 
-        std::vector<Tri> m_coplanarTris; //!< Triangles coplanar to this node's plane, implicitly taken to be the plane of the first tri in this list.
+        std::vector<Tri> m_coplanarTris; //!< Triangles coplanar to this node's plane
+        Plane* m_plane = nullptr;        //!< Node's plane
 
     private:
         struct SplitResult
@@ -47,14 +48,15 @@ namespace blithe
             bool m_loneInFront;
         };
         static SplitResult SplitTriangle(const Tri& _tri,
-                                         const std::array<float, 3>& _fs,
-                                         const Tri& _splitter);
+                                         const Plane* _splitter);
         void AddTriToFront(const Tri& _tri);
         void AddTriToBack(const Tri& _tri);
-        float CalcImplicitFunc(const glm::vec3& _point, float _snapToZeroTol);
+        static float CalcImplicitFunc(const glm::vec3& _point,
+                                      const Plane* _plane,
+                                      float _snapToZeroTol);
         static glm::vec3 FindIntersectionWithTriPlane(const glm::vec3& _start,
                                                       const glm::vec3& _end,
-                                                      const Tri& _tri);
+                                                      const Plane* _plane);
 
         TriBSPTree* m_backTree = nullptr;   //!< The back subtree of tris where f <= 0
         TriBSPTree* m_frontTree = nullptr;  //!< The front subtree of tris where f > 0

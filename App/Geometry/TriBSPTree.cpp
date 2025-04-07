@@ -19,6 +19,7 @@ namespace blithe
     TriBSPTree::~TriBSPTree()
     {
         m_coplanarTris.clear();
+        delete m_plane;
         delete m_backTree;
         delete m_frontTree;
     }
@@ -41,13 +42,14 @@ namespace blithe
         if ( m_coplanarTris.empty() )
         {
             m_coplanarTris.push_back(_tri);
+            m_plane = new Plane(_tri.CalcPlane());
             return;
         }
 
         // Classify the 3 vertices of _tri w.r.t. this node's plane
-        float fa = CalcImplicitFunc(_tri.m_v0.m_pos, MIN_F_VAL);
-        float fb = CalcImplicitFunc(_tri.m_v1.m_pos, MIN_F_VAL);
-        float fc = CalcImplicitFunc(_tri.m_v2.m_pos, MIN_F_VAL);
+        float fa = CalcImplicitFunc(_tri.m_v0.m_pos, m_plane, MIN_F_VAL);
+        float fb = CalcImplicitFunc(_tri.m_v1.m_pos, m_plane, MIN_F_VAL);
+        float fc = CalcImplicitFunc(_tri.m_v2.m_pos, m_plane, MIN_F_VAL);
 
         // If the implicit function evaluates to 0 for all 3 vertices of _tri, we classify _tri
         // as being coplanar with this node's plane ..
@@ -72,7 +74,7 @@ namespace blithe
         // .. else _tri intersects the plane, so we need to split it.
         else
         {
-            SplitResult splitTris = SplitTriangle(_tri, {fa,fb,fc}, m_coplanarTris.front());
+            SplitResult splitTris = SplitTriangle(_tri, m_plane);
 
             // std::cout << std::fixed << "t0 area = " << splitTris.m_t0.Area() << ", t1 area = " << splitTris.m_t1.Area() << ", t2 area = " << splitTris.m_t2.Area() << std::endl;
             if ( splitTris.m_loneInFront )
@@ -118,7 +120,7 @@ namespace blithe
         if ( !_root ) return;
 
         // Classify _cameraPos w.r.t. _root
-        float d = _root->CalcImplicitFunc(_cameraPos, MIN_F_VAL);
+        float d = CalcImplicitFunc(_cameraPos, _root->m_plane, MIN_F_VAL);
 
         // As is stated in "IMAGE GENERATION PHASE" of "On visible surface generation by a
         // priori tree structures":
@@ -205,7 +207,7 @@ namespace blithe
                 currentEntry.m_firstSubtreeProcessed = true;
 
                 // Classify _cameraPos w.r.t. currentNode
-                float d = currentNode->CalcImplicitFunc(_cameraPos, MIN_F_VAL);
+                float d = CalcImplicitFunc(_cameraPos, currentNode->m_plane, MIN_F_VAL);
 
                 // As is stated in "IMAGE GENERATION PHASE" of "On visible surface generation by a
                 // priori tree structures":
@@ -261,14 +263,18 @@ namespace blithe
     }
 
     TriBSPTree::SplitResult TriBSPTree::SplitTriangle(const Tri& _tri,
-                                                      const std::array<float, 3>& _fs,
-                                                      const Tri& _splitter)
+                                                      const Plane* _splitter)
     {
+        float fa = CalcImplicitFunc(_tri.m_v0.m_pos, _splitter, MIN_F_VAL);
+        float fb = CalcImplicitFunc(_tri.m_v1.m_pos, _splitter, MIN_F_VAL);
+        float fc = CalcImplicitFunc(_tri.m_v2.m_pos, _splitter, MIN_F_VAL);
+        std::array<float, 3> fs {fa, fb, fc};
+
         std::vector<size_t> frontVertIdxes;
         std::vector<size_t> backVertIdxes;
-        for ( size_t i = 0; i < _fs.size(); i++ )
+        for ( size_t i = 0; i < fs.size(); i++ )
         {
-            if ( _fs[i] <= 0.0f )
+            if ( fs[i] <= 0.0f )
             {
                 backVertIdxes.push_back(i);
             }
@@ -353,52 +359,39 @@ namespace blithe
 
     ///
     /// \brief Calculates a value f(_point) for the 3D point _point such that f(_point) < 0
-    ///        if _point is behind this node's plane and f(_point) > 0 if it's in the front.
+    ///        if _point is behind _node's plane and f(_point) > 0 if it's in the front.
     ///
     ///        The implicit function here is actually just the signed distance of _point from the
-    ///        triangle's plane.
+    ///        _node's plane.
     ///
-    /// \param _point - Point at which to evaluate implicit function
+    /// \param _point         - Point at which to evaluate implicit function
+    /// \param _node          - Node whose plane is used for the evaluating the function
+    /// \param _snapToZeroTol - Abs tolerance. f's value is snapped to zero if below this.
     ///
-    /// \return
+    /// \return f's value for _point
     ///
-    float TriBSPTree::CalcImplicitFunc(const glm::vec3& _point, float _snapToZeroTol)
+    float TriBSPTree::CalcImplicitFunc(const glm::vec3& _point,
+                                       const Plane* _plane,
+                                       float _snapToZeroTol)
     {
-        ASSERT(!m_coplanarTris.empty(), "Node triangle needs to have been populated to calc implicit func");
-
-        glm::vec3 normal;
-        float d;
-        m_coplanarTris.front().CalcNormalAndD(normal, d);
-
-        float val = glm::dot(normal, _point) + d;
-
-        // Snap to zero if less than tolerance
-        if ( std::abs(val) < _snapToZeroTol )
-        {
-            val = 0.0f;
-        }
-
-        return val;
+        ASSERT(_plane, "Node triangle needs to have been populated to calc implicit func");
+        return _plane->CalcSignedDist(_point, _snapToZeroTol);
     }
 
     ///
     /// \brief Finds the intersection point of a line segment with a triangle plane
     ///
-    /// \param _start
-    /// \param _end
-    /// \param _tri
+    /// \param _start - Segment start
+    /// \param _end   - Segment end
+    /// \param _plane - Plane to intersect with
     /// \return
     ///
     glm::vec3 TriBSPTree::FindIntersectionWithTriPlane(const glm::vec3& _start,
                                                        const glm::vec3& _end,
-                                                       const Tri& _tri)
+                                                       const Plane* _plane)
     {
-        glm::vec3 normal;
-        float d;
-        _tri.CalcNormalAndD(normal, d);
-
-        float distStart = glm::dot(normal, _start) + d;
-        float distEnd = glm::dot(normal, _end) + d;
+        float distStart = _plane->CalcSignedDist(_start, 0.0f);
+        float distEnd = _plane->CalcSignedDist(_end, 0.0f);
         float t = distStart / (distStart - distEnd);
         return _start + t * (_end - _start);
     }
