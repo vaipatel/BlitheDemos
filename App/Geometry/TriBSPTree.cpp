@@ -25,7 +25,12 @@ namespace blithe
     }
 
     ///
-    /// \brief Inserts triangle _tri into this BSP Tree.
+    /// \brief Inserts triangle _tri into this BSP Tree recursively.
+    ///
+    ///        SplitTriangle() which does the important work of determining _tri's spatial
+    ///        relationship to each node as this function recurses i.e. whether _tri is COPLANAR,
+    ///        IN FRONT OF, BEHIND or INTERSECTING the plane of the node that we have recursed down
+    ///        to, and splitting _tri if needed.
     ///
     ///        I took inspiration from the pseudo-code in Algorithm 3 of the below cited article
     ///        "Constructive Solid Geometry Using BSP Tree". (I don't know if I did a good job of
@@ -42,31 +47,29 @@ namespace blithe
         if ( m_coplanarTris.empty() )
         {
             m_coplanarTris.push_back(_tri);
-            m_plane = new Plane(_tri.CalcPlane());
+            Plane plane = _tri.CalcPlane();
+            m_plane = new Plane();
+            m_plane->m_normal = plane.m_normal;
+            m_plane->m_d = plane.m_d;
             return;
         }
 
-        // Classify the 3 vertices of _tri w.r.t. this node's plane
-        float fa = CalcImplicitFunc(_tri.m_v0.m_pos, m_plane, MIN_F_VAL);
-        float fb = CalcImplicitFunc(_tri.m_v1.m_pos, m_plane, MIN_F_VAL);
-        float fc = CalcImplicitFunc(_tri.m_v2.m_pos, m_plane, MIN_F_VAL);
-
-        // If the implicit function evaluates to 0 for all 3 vertices of _tri, we classify _tri
-        // as being coplanar with this node's plane ..
-        if ( fa == 0.0f && fb == 0.0f && fc == 0.0f )
+        SplitResult splitRes;
+        SplitTriangle(_tri, m_plane, splitRes);
+        // Either _tri is coplanar with this node's plane ..
+        if ( !splitRes.m_coplanarFrontTris.empty() || !splitRes.m_coplanarBackTris.empty() )
         {
             m_coplanarTris.push_back(_tri);
             return;
         }
-        // .. else if the implicit function evaluates to <= 0, we classify _tri as being behind
-        // this node's plane ..
-        else if ( fa <= 0.0f && fb <= 0.0f && fc <= 0.0f )
+        // .. else _tri is behind this node's plane ..
+        else if ( !splitRes.m_backTris.empty() )
         {
             AddTriToBack(_tri);
             return;
         }
-        // .. else we classify _tri as being in front of this node's plane ..
-        else if ( fa >= 0.0f && fb >= 0.0f && fc >= 0.0f )
+        // .. else _tri is in front of this node's plane ..
+        else if ( !splitRes.m_frontTris.empty() )
         {
             AddTriToFront(_tri);
             return;
@@ -74,20 +77,22 @@ namespace blithe
         // .. else _tri intersects the plane, so we need to split it.
         else
         {
-            SplitResult splitTris = SplitTriangle(_tri, m_plane);
+            ASSERT(splitRes.m_frontTris.size() == 1 && splitRes.m_backTris.size() == 2 ||
+                   splitRes.m_frontTris.size() == 2 && splitRes.m_backTris.size() == 1,
+                   "Poor split condition detection");
 
             // std::cout << std::fixed << "t0 area = " << splitTris.m_t0.Area() << ", t1 area = " << splitTris.m_t1.Area() << ", t2 area = " << splitTris.m_t2.Area() << std::endl;
-            if ( splitTris.m_loneInFront )
+            if ( splitRes.m_frontTris.size() == 1 )
             {
-                AddTriToFront(splitTris.m_t0);
-                AddTriToBack(splitTris.m_t1);
-                AddTriToBack(splitTris.m_t2);
+                AddTriToFront(splitRes.m_frontTris[0]);
+                AddTriToBack(splitRes.m_backTris[0]);
+                AddTriToBack(splitRes.m_backTris[1]);
             }
             else
             {
-                AddTriToBack(splitTris.m_t0);
-                AddTriToFront(splitTris.m_t1);
-                AddTriToFront(splitTris.m_t2);
+                AddTriToBack(splitRes.m_backTris[0]);
+                AddTriToFront(splitRes.m_frontTris[0]);
+                AddTriToFront(splitRes.m_frontTris[1]);
             }
         }
     }
@@ -262,12 +267,54 @@ namespace blithe
         CountTotalNumTris(_root->m_frontTree, _outNumTris);
     }
 
-    TriBSPTree::SplitResult TriBSPTree::SplitTriangle(const Tri& _tri,
-                                                      const Plane* _splitter)
+    ///
+    /// \brief Splits the given triangle _tri using the plane _splitter.
+    ///
+    ///        As mentioned in AddTriangle(), I took inspiration from the pseudo-code in Algorithm 3
+    ///        of the below cited article "Constructive Solid Geometry Using BSP Tree".
+    ///
+    /// \cite Segura, C.D., Stine, T., & Yang, J. (2013). Constructive Solid Geometry Using BSP Tree.
+    ///
+    /// \param _tri       - Triangle to split
+    /// \param _splitter  - Splitting plane
+    /// \param _res       - (out) Result of split
+    ///
+    void TriBSPTree::SplitTriangle(const Tri& _tri, const Plane* _splitter, SplitResult& _res)
     {
         float fa = CalcImplicitFunc(_tri.m_v0.m_pos, _splitter, MIN_F_VAL);
         float fb = CalcImplicitFunc(_tri.m_v1.m_pos, _splitter, MIN_F_VAL);
         float fc = CalcImplicitFunc(_tri.m_v2.m_pos, _splitter, MIN_F_VAL);
+
+        // If the implicit function evaluates to 0 for all 3 vertices of _tri, we classify _tri
+        // as being coplanar with this node's plane ..
+        if ( fa == 0.0f && fb == 0.0f && fc == 0.0f )
+        {
+            if ( glm::dot(_tri.CalcPlane().m_normal, _splitter->m_normal) > 0.0f )
+            {
+                _res.m_coplanarFrontTris.push_back(_tri);
+                //_res.m_frontTris.push_back(_tri);
+            }
+            else
+            {
+                _res.m_coplanarBackTris.push_back(_tri);
+                //_res.m_backTris.push_back(_tri);
+            }
+            return;
+        }
+        // .. else if the implicit function evaluates to <= 0, we classify _tri as being behind
+        // this node's plane ..
+        else if ( fa <= 0.0f && fb <= 0.0f && fc <= 0.0f )
+        {
+            _res.m_backTris.push_back(_tri);
+            return;
+        }
+        // .. else we classify _tri as being in front of this node's plane ..
+        else if ( fa >= 0.0f && fb >= 0.0f && fc >= 0.0f )
+        {
+            _res.m_frontTris.push_back(_tri);
+            return;
+        }
+        // .. else _tri intersects the plane, so we need to split it.
         std::array<float, 3> fs {fa, fb, fc};
 
         std::vector<size_t> frontVertIdxes;
@@ -330,9 +377,30 @@ namespace blithe
         t2.m_v1 = rearrangedVerts[2];
         t2.m_v2 = {intersectionB, rearrangedVerts[2].m_color, rearrangedVerts[0].m_texCoords};
 
-        return {t0, t1, t2, oneFront};
+        if ( oneFront )
+        {
+            _res.m_frontTris.push_back(t0);
+            _res.m_backTris.push_back(t1);
+            _res.m_backTris.push_back(t2);
+        }
+        else
+        {
+            _res.m_backTris.push_back(t0);
+            _res.m_frontTris.push_back(t1);
+            _res.m_frontTris.push_back(t2);
+        }
+
+        return;
     }
 
+    ///
+    /// \brief Adds the triangle _tri to the front tree, constructing the front tree if needed.
+    ///        The add is recursive.
+    ///
+    /// \note This ignores the triangle if its area is too small, to avoid adding very thin strips
+    ///
+    /// \param _tri - Triangle to add
+    ///
     void TriBSPTree::AddTriToFront(const Tri& _tri)
     {
         if ( _tri.Area() > 1e-3f )
@@ -345,6 +413,14 @@ namespace blithe
         }
     }
 
+    ///
+    /// \brief Adds the triangle _tri to the back tree, constructing the back tree if needed.
+    ///        The add is recursive.
+    ///
+    /// \note This ignores the triangle if its area is too small, to avoid adding very thin strips
+    ///
+    /// \param _tri - Triangle to add
+    ///
     void TriBSPTree::AddTriToBack(const Tri& _tri)
     {
         if ( _tri.Area() > 1e-3f )

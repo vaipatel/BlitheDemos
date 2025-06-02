@@ -40,15 +40,19 @@ namespace blithe
         Plane* m_plane = nullptr;        //!< Node's plane
 
     private:
+        ///
+        /// \brief Result of splitting a poly (usually a triangle) with node planes in the tree.
+        ///        Vector members help to pass the same SplitResult recursively down the tree.
+        ///
         struct SplitResult
         {
-            Tri m_t0;
-            Tri m_t1;
-            Tri m_t2;
-            bool m_loneInFront;
+            std::vector<Tri> m_frontTris; //!< Tris in front of the split plane
+            std::vector<Tri> m_backTris;  //!< Tris behind the split plane
+            std::vector<Tri> m_coplanarFrontTris; //!< Tris coplanar with the split plane
+            std::vector<Tri> m_coplanarBackTris; //!< Coplanar tris but with normal backwards
         };
-        static SplitResult SplitTriangle(const Tri& _tri,
-                                         const Plane* _splitter);
+
+        static void SplitTriangle(const Tri& _tri, const Plane* _splitter, SplitResult& _res);
         void AddTriToFront(const Tri& _tri);
         void AddTriToBack(const Tri& _tri);
         static float CalcImplicitFunc(const glm::vec3& _point,
